@@ -132,3 +132,32 @@ This document captures key architectural decisions for the portfolio website.
 - Portfolio is meant to be publicly accessible
 - No sensitive data or admin functionality
 - Simplifies architecture
+
+## Phase 1: Application Code
+
+### Lambda Function (contact_handler.py)
+- **Language**: Python 3.12 (Lambda-optimized, fast cold starts)
+- **Validation**: Server-side validation for name, email, message
+- **CORS**: Handled in Lambda (not just API Gateway) for flexibility
+- **Error Handling**: Specific error messages, graceful failures
+- **Email Format**: HTML + plain text for maximum compatibility
+- **Security**: No sensitive data in logs, input sanitization
+
+### Static Site
+- **Structure**: Single-page HTML with sections (About, Projects, Contact)
+- **Styling**: Vanilla CSS, responsive design, no frameworks
+- **JavaScript**: Minimal, fetch API for form submission
+- **API Endpoint**: Placeholder replaced during deployment via sed
+- **Caching**: Aggressive cache for assets, no-cache for HTML/JS
+
+### CI/CD Pipeline (GitHub Actions)
+- **Trigger**: Push to main branch
+- **Authentication**: OIDC (no long-lived AWS credentials)
+- **Deployment Order**: Lambda → Site → CloudFront invalidation
+- **Cache Strategy**: Static assets cached 1 year, HTML/JS no-cache
+- **Rollback**: Manual (revert commit and redeploy)
+
+### Testing Strategy
+- Lambda unit tests for validation logic
+- Manual E2E testing after deployment
+- No automated E2E (overkill for portfolio site)

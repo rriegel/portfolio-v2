@@ -1,0 +1,70 @@
+name: Deploy Portfolio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Build Lambda package
+        run: |
+          cd app/lambda
+          ./build.sh
+
+      - name: Deploy Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name portfolio-contact-prod \
+            --zip-file fileb://app/lambda/lambda.zip \
+            --publish
+
+      - name: Replace API endpoint in site
+        run: |
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name portfolio-prod \
+            --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
+            --output text 2>/dev/null || echo "")
+          
+          if [ -n "$API_URL" ]; then
+            sed -i "s|__API_ENDPOINT__|${API_URL}/contact|g" app/site/script.js
+          fi
+
+      - name: Deploy static site to S3
+        run: |
+          aws s3 sync app/site/ s3://portfolio-prod \
+            --delete \
+            --cache-control "max-age=31536000" \
+            --exclude "index.html" \
+            --exclude "script.js"
+          
+          aws s3 sync app/site/ s3://portfolio-prod \
+            --exclude "*" \
+            --include "index.html" \
+            --include "script.js" \
+            --cache-control "max-age=0,no-cache,no-store,must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
+            --stack-name portfolio-prod \
+            --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
+            --output text)
+          
+          aws cloudfront create-invalidation \
+            --distribution-id "$DISTRIBUTION_ID" \
+            --paths "/*"
