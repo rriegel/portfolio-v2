@@ -1,0 +1,18 @@
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to git (it contains secrets)
+
+# AWS Configuration
+aws_region = "us-east-1"
+
+# Environment
+environment = "prod"
+
+# Domain Configuration
+domain_name = "yourdomain.com"
+
+# Cloudflare Configuration
+cloudflare_zone_id = "your-cloudflare-zone-id"
+cloudflare_api_token = "your-cloudflare-api-token"
+
+# Contact Form Configuration
+ses_email_address = "your-email@example.com"
