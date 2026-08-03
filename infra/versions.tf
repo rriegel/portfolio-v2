@@ -13,10 +13,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "portfolio-terraform-state"
+    bucket         = "portfolio-state-1785779531"
     key            = "portfolio/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "terraform-locks"
+    use_lockfile = true
   }
 }

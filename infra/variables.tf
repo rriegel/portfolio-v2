@@ -10,6 +10,12 @@ variable "environment" {
   default     = "prod"
 }
 
+variable "project_name" {
+  description = "Project name for resource naming"
+  type        = string
+  default     = "portfolio"
+}
+
 variable "domain_name" {
   description = "Primary domain name (e.g., yourdomain.com)"
   type        = string
@@ -26,7 +32,12 @@ variable "cloudflare_api_token" {
   sensitive   = true
 }
 
-variable "ses_email_address" {
+variable "contact_form_sender_email" {
+  description = "Email address that will send contact form submissions (must be verified in SES)"
+  type        = string
+}
+
+variable "contact_form_recipient_email" {
   description = "Email address to receive contact form submissions"
   type        = string
 }
