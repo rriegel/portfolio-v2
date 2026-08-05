@@ -33,26 +33,17 @@ jobs:
             --zip-file fileb://app/lambda/lambda.zip \
             --publish
 
-      - name: Replace API endpoint in site
-        run: |
-          API_URL=$(aws cloudformation describe-stacks \
-            --stack-name portfolio-prod \
-            --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
-            --output text 2>/dev/null || echo "")
-          
-          if [ -n "$API_URL" ]; then
-            sed -i "s|__API_ENDPOINT__|${API_URL}/contact|g" app/site/script.js
-          fi
-
       - name: Deploy static site to S3
         run: |
-          aws s3 sync app/site/ s3://portfolio-prod \
+          # Deploy assets with long cache
+          aws s3 sync app/site/ s3://portfolio-prod-rrigel \
             --delete \
             --cache-control "max-age=31536000" \
             --exclude "index.html" \
             --exclude "script.js"
           
-          aws s3 sync app/site/ s3://portfolio-prod \
+          # Deploy HTML/JS with no-cache
+          aws s3 sync app/site/ s3://portfolio-prod-rrigel \
             --exclude "*" \
             --include "index.html" \
             --include "script.js" \
@@ -60,11 +51,6 @@ jobs:
 
       - name: Invalidate CloudFront cache
         run: |
-          DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
-            --stack-name portfolio-prod \
-            --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' \
-            --output text)
-          
           aws cloudfront create-invalidation \
-            --distribution-id "$DISTRIBUTION_ID" \
+            --distribution-id E364HA5CJUYPG \
             --paths "/*"
