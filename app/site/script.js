@@ -1,5 +1,5 @@
 // API endpoint - will be replaced during deployment
-const API_ENDPOINT = '__API_ENDPOINT__';
+const API_ENDPOINT = 'https://api.ryanriegel.dev/contact';
 
 document.getElementById('contact-form').addEventListener('submit', async (e) => {
     e.preventDefault();
