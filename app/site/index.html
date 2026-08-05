@@ -10,8 +10,8 @@
     <header>
         <nav>
             <div class="container">
-                <h1>Ryan Riegel</h1>
-                <ul>
+                <h1 class="logo">Ryan Riegel</h1>
+                <ul class="nav-links">
                     <li><a href="#about">About</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -21,10 +21,78 @@
     </header>
 
     <main>
+        <section id="hero" class="section">
+            <div class="container">
+                <h2>Software Engineer</h2>
+                <p class="hero-subtitle">Building scalable systems and clean, maintainable code</p>
+                <div class="hero-links">
+                    <a href="#projects" class="btn btn-primary">View Projects</a>
+                    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                </div>
+            </div>
+        </section>
+
         <section id="about" class="section">
             <div class="container">
                 <h2>About</h2>
-                <p>Software Engineer with experience in full-stack development, cloud infrastructure, and building scalable systems.</p>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Full-stack software engineer with experience building web applications, cloud infrastructure, and developer tools. I focus on writing clean, testable code and building systems that scale.</p>
+                        <p>Currently working on infrastructure automation and cloud-native applications using AWS, Terraform, and modern web technologies.</p>
+                    </div>
+                    <div class="skills">
+                        <h3>Technical Skills</h3>
+                        <div class="skill-category">
+                            <h4>Languages</h4>
+                            <ul>
+                                <li>Ruby</li>
+                                <li>JavaScript/TypeScript</li>
+                                <li>Python</li>
+                                <li>Java</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h4>Frameworks</h4>
+                            <ul>
+                                <li>Rails</li>
+                                <li>React</li>
+                                <li>Node.js</li>
+                                <li>Spring Boot</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h4>Infrastructure</h4>
+                            <ul>
+                                <li>AWS</li>
+                                <li>Terraform</li>
+                                <li>Docker</li>
+                                <li>CI/CD</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience">
+                    <h3>Experience</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <h4>Software Engineer II</h4>
+                                <span class="timeline-date">2023 - Present</span>
+                            </div>
+                            <p class="timeline-company">Finalsite (Remote)</p>
+                            <p>Full-stack development with Ruby on Rails, React, and AWS infrastructure. Building scalable education platforms serving thousands of schools.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <h4>Software Engineer</h4>
+                                <span class="timeline-date">2021 - 2023</span>
+                            </div>
+                            <p class="timeline-company">Previous Role</p>
+                            <p>Web application development, API design, and database optimization. Implemented CI/CD pipelines and improved deployment workflows.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -32,15 +100,49 @@
             <div class="container">
                 <h2>Projects</h2>
                 <div class="project-grid">
-                    <div class="project-card">
+                    <article class="project-card">
                         <h3>Portfolio Site</h3>
-                        <p>Serverless static site deployed on AWS with Terraform infrastructure as code.</p>
+                        <p class="project-description">Serverless static site deployed on AWS with Terraform infrastructure as code. Features automated CI/CD pipeline, contact form with Lambda backend, and CloudFront CDN.</p>
                         <div class="tech-stack">
-                            <span>AWS</span>
-                            <span>Terraform</span>
-                            <span>Lambda</span>
+                            <span class="tech-tag">AWS</span>
+                            <span class="tech-tag">Terraform</span>
+                            <span class="tech-tag">Lambda</span>
+                            <span class="tech-tag">CloudFront</span>
+                            <span class="tech-tag">GitHub Actions</span>
                         </div>
-                    </div>
+                        <div class="project-links">
+                            <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>
+                            <a href="https://ryanriegel.dev" class="project-link">Live Site</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <h3>Project Two</h3>
+                        <p class="project-description">Description of another project. What problem does it solve? What technologies did you use? What was the impact?</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Technology</span>
+                            <span class="tech-tag">Framework</span>
+                            <span class="tech-tag">Tool</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Demo</a>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <h3>Project Three</h3>
+                        <p class="project-description">Description of another project. Highlight the technical challenges and solutions. Show your problem-solving approach.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Technology</span>
+                            <span class="tech-tag">Framework</span>
+                            <span class="tech-tag">Tool</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Demo</a>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
@@ -48,6 +150,7 @@
         <section id="contact" class="section">
             <div class="container">
                 <h2>Contact</h2>
+                <p class="contact-intro">Interested in working together? Send me a message and I'll get back to you soon.</p>
                 <form id="contact-form">
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -61,8 +164,8 @@
                         <label for="message">Message</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
                     </div>
-                    <button type="submit">Send Message</button>
-                    <div id="form-status"></div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <div id="form-status" role="alert"></div>
                 </form>
             </div>
         </section>
@@ -70,7 +173,11 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Ryan Riegel. Built with AWS.</p>
+            <p>&copy; 2026 Ryan Riegel. Built with AWS, Terraform, and GitHub Actions.</p>
+            <div class="social-links">
+                <a href="https://github.com/rriegel" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://linkedin.com/in/ryanjriegel" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
         </div>
     </footer>
 
