@@ -51,3 +51,37 @@ resource "cloudflare_record" "site_api" {
   proxied = false
   ttl     = 1
 }
+
+# SES Domain Verification Records
+resource "cloudflare_record" "ses_verification" {
+  zone_id = var.cloudflare_zone_id
+  name    = "_amazonses"
+  content = module.ses.domain_identity_arn
+  type    = "TXT"
+  ttl     = 1
+}
+
+resource "cloudflare_record" "ses_dkim" {
+  count   = 3
+  zone_id = var.cloudflare_zone_id
+  name    = "${module.ses.dkim_tokens[count.index]}._domainkey"
+  content = "${module.ses.dkim_tokens[count.index]}.dkim.amazonses.com"
+  type    = "CNAME"
+  ttl     = 1
+}
+
+resource "cloudflare_record" "ses_mail_from" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail"
+  content = "feedback-smtp.us-east-1.amazonses.com"
+  type    = "CNAME"
+  ttl     = 1
+}
+
+resource "cloudflare_record" "ses_mail_from_spf" {
+  zone_id = var.cloudflare_zone_id
+  name    = "mail"
+  content = "v=spf1 include:amazonses.com ~all"
+  type    = "TXT"
+  ttl     = 1
+}
