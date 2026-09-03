@@ -120,3 +120,19 @@ resource "aws_lambda_permission" "api_gateway" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.contact.execution_arn}/*/*"
 }
+
+resource "aws_apigatewayv2_domain_name" "contact" {
+  domain_name = var.api_domain_name
+
+  domain_name_configuration {
+    certificate_arn = var.certificate_arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
+resource "aws_apigatewayv2_api_mapping" "contact" {
+  api_id      = aws_apigatewayv2_api.contact.id
+  domain_name = aws_apigatewayv2_domain_name.contact.id
+  stage       = aws_apigatewayv2_stage.default.id
+}

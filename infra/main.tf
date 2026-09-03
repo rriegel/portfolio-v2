@@ -14,6 +14,8 @@ module "api" {
   environment                    = var.environment
   contact_form_sender_email      = var.contact_form_sender_email
   contact_form_recipient_email   = var.contact_form_recipient_email
+  api_domain_name                = "api.${var.domain_name}"
+  certificate_arn                = aws_acm_certificate.main.arn
 }
 
 module "ses" {
@@ -46,7 +48,7 @@ resource "cloudflare_record" "site_www" {
 resource "cloudflare_record" "site_api" {
   zone_id = var.cloudflare_zone_id
   name    = "api"
-  content = replace(module.api.api_endpoint, "https://", "")
+  content = module.api.api_custom_domain
   type    = "CNAME"
   proxied = false
   ttl     = 1
