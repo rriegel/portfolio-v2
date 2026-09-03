@@ -17,3 +17,13 @@ variable "contact_form_recipient_email" {
   description = "Email address to receive contact form submissions"
   type        = string
 }
+
+variable "api_domain_name" {
+  description = "Custom domain name for the contact form API"
+  type        = string
+}
+
+variable "certificate_arn" {
+  description = "ACM certificate ARN covering the API domain (must be in us-east-1)"
+  type        = string
+}

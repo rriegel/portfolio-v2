@@ -1,6 +1,16 @@
 output "api_endpoint" {
-  description = "API Gateway endpoint URL"
+  description = "URL of the contact form API"
   value       = aws_apigatewayv2_api.contact.api_endpoint
+}
+
+output "api_custom_domain" {
+  description = "Custom domain name serving the contact form API"
+  value       = aws_apigatewayv2_domain_name.contact.domain_name
+}
+
+output "api_regional_domain_name" {
+  description = "Regional endpoint hostname that the custom domain DNS record points to"
+  value       = aws_apigatewayv2_domain_name.contact.domain_name_configuration[0].target_domain_name
 }
 
 output "lambda_function_name" {

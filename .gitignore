@@ -2,7 +2,6 @@
 *.tfstate
 *.tfstate.backup
 .terraform/
-.terraform.lock.hcl
 *.tfvars
 !*.tfvars.example
 crash.log
@@ -40,3 +39,7 @@ Thumbs.db
 .env
 .env.local
 terraform.tfvars
+
+# Terraform plan files
+tfplan
+*.tfplan

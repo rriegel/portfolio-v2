@@ -10,3 +10,7 @@ resource "aws_ses_domain_mail_from" "main" {
   domain           = aws_ses_domain_identity.main.domain
   mail_from_domain = "mail.${var.domain_name}"
 }
+
+resource "aws_ses_email_identity" "recipient" {
+  email = var.recipient_email
+}
