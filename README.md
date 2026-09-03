@@ -2,6 +2,8 @@
 
 Serverless static portfolio website deployed on AWS with Terraform infrastructure as code.
 
+**Live site:** https://ryanriegel.dev
+
 ## Architecture
 
 - **Static Site**: S3 + CloudFront CDN
@@ -37,10 +39,36 @@ Serverless static portfolio website deployed on AWS with Terraform infrastructur
 
 ## Development
 
-### Local Testing
+### Running the Site Locally
+
+The site is plain HTML/CSS/JS in `app/site/` — serve it with any static file server (a server is needed so the contact form's relative paths and fetch calls behave like production):
 
 ```bash
-# Test Lambda function
+# From the repo root — pick whichever you have:
+python3 -m http.server 8000 --directory app/site
+# or: npx serve app/site
+```
+
+Then open http://localhost:8000.
+
+**Note on the contact form:** it posts to the production API (`https://api.ryanriegel.dev/contact`) which is hardcoded in `app/site/script.js`, so submissions from the local preview send real email through the live SES endpoint. CORS on the API only allows the production origins, so browsers will block the request from `localhost` — the form will appear broken locally. Everything else (layout, styles, nav) works. To test the form locally, temporarily point `API_ENDPOINT` at the API Gateway URL from `terraform output api_endpoint` (CORS will still block it from localhost; use curl instead — see below).
+
+### Testing the Contact Form API
+
+```bash
+# Validation errors (expect 400 with an errors list)
+curl -X POST "$(cd infra && terraform output -raw api_endpoint)/contact" \
+  -H "Content-Type: application/json" -d '{}'
+
+# Or through the custom domain (expect 200 and a real email)
+curl -X POST "https://api.ryanriegel.dev/contact" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"you@example.com","message":"Hello from curl"}'
+```
+
+### Lambda Unit Tests
+
+```bash
 cd app/lambda
 python3 test_contact_handler.py
 
