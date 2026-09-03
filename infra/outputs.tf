@@ -23,6 +23,16 @@ output "api_endpoint" {
   value       = module.api.api_endpoint
 }
 
+output "api_custom_domain" {
+  description = "Custom domain name serving the contact form API"
+  value       = module.api.api_custom_domain
+}
+
+output "api_regional_domain_name" {
+  description = "Regional endpoint hostname that the API custom domain DNS record points to"
+  value       = module.api.api_regional_domain_name
+}
+
 output "lambda_function_name" {
   description = "Name of the contact form Lambda function"
   value       = module.api.lambda_function_name

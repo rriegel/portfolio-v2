@@ -8,6 +8,11 @@ output "api_custom_domain" {
   value       = aws_apigatewayv2_domain_name.contact.domain_name
 }
 
+output "api_regional_domain_name" {
+  description = "Regional endpoint hostname that the custom domain DNS record points to"
+  value       = aws_apigatewayv2_domain_name.contact.domain_name_configuration[0].target_domain_name
+}
+
 output "lambda_function_name" {
   description = "Name of the Lambda function"
   value       = aws_lambda_function.contact.function_name

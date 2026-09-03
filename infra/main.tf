@@ -48,7 +48,7 @@ resource "cloudflare_record" "site_www" {
 resource "cloudflare_record" "site_api" {
   zone_id = var.cloudflare_zone_id
   name    = "api"
-  content = module.api.api_custom_domain
+  content = module.api.api_regional_domain_name
   type    = "CNAME"
   proxied = false
   ttl     = 1
