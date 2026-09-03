@@ -12,3 +12,7 @@ output "mail_from_domain" {
   description = "MAIL FROM domain"
   value       = aws_ses_domain_mail_from.main.mail_from_domain
 }
+output "recipient_identity_arn" {
+  description = "ARN of the SES email identity for the contact form recipient"
+  value       = aws_ses_email_identity.recipient.arn
+}

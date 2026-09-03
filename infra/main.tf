@@ -24,6 +24,7 @@ module "ses" {
   project_name = var.project_name
   environment  = var.environment
   domain_name  = var.domain_name
+  recipient_email = var.contact_form_recipient_email
 }
 
 # Cloudflare DNS records for CloudFront

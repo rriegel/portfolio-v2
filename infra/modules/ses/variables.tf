@@ -12,3 +12,7 @@ variable "project_name" {
   description = "Project name for resource naming"
   type        = string
 }
+variable "recipient_email" {
+  description = "Email address that receives contact form submissions (verified as an SES identity so sandbox accounts can deliver to it)"
+  type        = string
+}
