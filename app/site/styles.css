@@ -198,19 +198,53 @@ h2::after {
     font-size: 0.9rem;
 }
 
-/* Experience Timeline */
-.experience h3 {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
+/* Life & Work Timeline */
+.timeline-intro {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-chips {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+}
+
+.chip {
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chip:hover {
+    border-color: #00d9ff;
+    color: #00b8d9;
+}
+
+.chip[aria-pressed="true"] {
+    background: #00d9ff;
+    border-color: #00d9ff;
     color: #1a1a2e;
 }
 
-.timeline {
+.life-timeline {
+    list-style: none;
     position: relative;
     padding-left: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
 }
 
-.timeline::before {
+.life-timeline::before {
     content: '';
     position: absolute;
     left: 0;
@@ -220,17 +254,18 @@ h2::after {
     background: #00d9ff;
 }
 
-.timeline-item {
+.milestone {
     position: relative;
     margin-bottom: 2rem;
     padding-left: 1.5rem;
+    transition: opacity 0.3s, filter 0.3s;
 }
 
-.timeline-item::before {
+.milestone::before {
     content: '';
     position: absolute;
     left: -2.5rem;
-    top: 0.5rem;
+    top: 0.4rem;
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -239,30 +274,67 @@ h2::after {
     box-shadow: 0 0 0 2px #00d9ff;
 }
 
-.timeline-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.5rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+.milestone[data-cat="run"]::before {
+    background: #2ecc71;
+    box-shadow: 0 0 0 2px #2ecc71;
 }
 
-.timeline-header h4 {
+.milestone[data-cat="hobby"]::before {
+    background: #f39c12;
+    box-shadow: 0 0 0 2px #f39c12;
+}
+
+.milestone-date {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.milestone-body h4 {
     font-size: 1.25rem;
+    color: #1a1a2e;
+    margin-bottom: 0.4rem;
+}
+
+.milestone-cat {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    margin-right: 0.5rem;
+    vertical-align: 2px;
+}
+
+.milestone[data-cat="work"] .milestone-cat {
+    background: #00d9ff;
     color: #1a1a2e;
 }
 
-.timeline-date {
-    color: #666;
-    font-size: 0.9rem;
-    font-weight: 500;
+.milestone[data-cat="run"] .milestone-cat {
+    background: #2ecc71;
+    color: white;
 }
 
-.timeline-company {
-    color: #00d9ff;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+.milestone[data-cat="hobby"] .milestone-cat {
+    background: #f39c12;
+    color: #1a1a2e;
+}
+
+.milestone-body p {
+    color: #555;
+    line-height: 1.7;
+    max-width: 640px;
+}
+
+/* Ghost overlay: non-matching milestones dim but stay in place */
+.milestone[data-dim] {
+    opacity: 0.35;
+    filter: saturate(0.4);
 }
 
 /* Projects Section */
@@ -514,9 +586,34 @@ footer .container {
         grid-template-columns: 1fr;
     }
 
-    .timeline-header {
-        flex-direction: column;
-        align-items: flex-start;
+    .timeline-chips {
+        gap: 0.5rem;
+    }
+
+    .chip {
+        font-size: 0.85rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .life-timeline {
+        padding-left: 1.5rem;
+    }
+
+    .milestone {
+        padding-left: 1rem;
+    }
+
+    .milestone::before {
+        left: -2rem;
+    }
+
+    .milestone-body h4 {
+        font-size: 1.1rem;
+    }
+
+    .milestone-cat {
+        display: block;
+        margin-bottom: 0.3rem;
     }
 }
 
