@@ -26,6 +26,7 @@
                 <h1 class="logo">Ryan Riegel</h1>
                 <ul class="nav-links">
                     <li><a href="#about">About</a></li>
+                    <li><a href="#timeline">Timeline</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -84,27 +85,87 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="experience">
-                    <h3>Experience</h3>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-header">
-                                <h4>Software Engineer II</h4>
-                                <span class="timeline-date">2024 - Present</span>
-                            </div>
-                            <p class="timeline-company">Finalsite (Remote)</p>
+        <section id="timeline" class="section">
+            <div class="container">
+                <h2>Life &amp; Work Timeline</h2>
+                <p class="timeline-intro">A living timeline, not a resume. Filter it by what you're curious about.</p>
+                <div class="timeline-chips" role="group" aria-label="Filter timeline by category">
+                    <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+                    <button type="button" class="chip" data-filter="work" aria-pressed="false">Professional</button>
+                    <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
+                    <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
+                </div>
+                <div class="life-timeline-wrap">
+                    <span class="life-timeline-start" aria-hidden="true">2021</span>
+                    <ol class="life-timeline">
+                    <li class="milestone" data-cat="run">
+                        <button type="button" class="milestone-node" aria-label="2025 — Running milestone (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2025</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone three]</h4>
+                            <p>[Placeholder — swap for a real milestone: race result, PR, or DNF with a story.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="hobby">
+                        <button type="button" class="milestone-node" aria-label="2025 — Q*bert (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2025</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Hobby</span> Q*bert</h4>
+                            <p>[Placeholder — swap for a real milestone: what shipped, what it taught you.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="work">
+                        <button type="button" class="milestone-node" aria-label="2024 — Software Engineer II at Finalsite (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2024</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Work</span> Software Engineer II — Finalsite</h4>
                             <p>Full-stack development with Ruby on Rails, React, and AWS infrastructure. Building scalable education platforms serving thousands of schools.</p>
                         </div>
-                        <div class="timeline-item">
-                            <div class="timeline-header">
-                                <h4>Software Engineer</h4>
-                                <span class="timeline-date">2021 - 2024</span>
-                            </div>
-                            <p class="timeline-company">Seisan Consulting</p>
+                    </li>
+                    <li class="milestone" data-cat="hobby">
+                        <button type="button" class="milestone-node" aria-label="2024 — Hobby milestone (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2024</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Hobby</span> [Placeholder — Hobby milestone three]</h4>
+                            <p>[Placeholder — swap for a real milestone.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="run">
+                        <button type="button" class="milestone-node" aria-label="2023 — Running milestone (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2023</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone two]</h4>
+                            <p>[Placeholder — swap for a real milestone.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="hobby">
+                        <button type="button" class="milestone-node" aria-label="2023 — Hobby milestone (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2023</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Hobby</span> [Placeholder — Hobby milestone two]</h4>
+                            <p>[Placeholder — swap for a real milestone: music production, homelab, etc.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="run">
+                        <button type="button" class="milestone-node" aria-label="2022 — Running milestone (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2022</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone one]</h4>
+                            <p>[Placeholder — swap for a real milestone: first marathon, first race, etc.]</p>
+                        </div>
+                    </li>
+                    <li class="milestone" data-cat="work">
+                        <button type="button" class="milestone-node" aria-label="2021 — Software Engineer at Seisan Consulting (details)" aria-expanded="false"></button>
+                        <span class="milestone-date">2021</span>
+                        <div class="milestone-body" role="tooltip">
+                            <h4><span class="milestone-cat">Work</span> Software Engineer — Seisan Consulting</h4>
                             <p>Built web applications for clients across a range of industries, covering API design, frontend development, and database optimization. Implemented CI/CD pipelines and improved deployment workflows.</p>
                         </div>
-                    </div>
+                    </li>
+                </ol>
                 </div>
             </div>
         </section>
@@ -242,6 +303,7 @@
         </div>
     </footer>
 
+    <script src="timeline.js" defer></script>
     <script src="script.js"></script>
 </body>
 </html>
