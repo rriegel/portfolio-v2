@@ -114,22 +114,6 @@
                 <h2>Projects</h2>
                 <div class="project-grid">
                     <article class="project-card">
-                        <h3>Portfolio Site</h3>
-                        <p class="project-description">Serverless static site deployed on AWS with Terraform infrastructure as code. Features automated CI/CD pipeline, contact form with Lambda backend, and CloudFront CDN.</p>
-                        <div class="tech-stack">
-                            <span class="tech-tag">AWS</span>
-                            <span class="tech-tag">Terraform</span>
-                            <span class="tech-tag">Lambda</span>
-                            <span class="tech-tag">CloudFront</span>
-                            <span class="tech-tag">GitHub Actions</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>
-                            <a href="https://ryanriegel.dev" class="project-link">Live Site</a>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
                         <h3>Self-Hosted Music MCP</h3>
                         <p class="project-description">A Model Context Protocol server that gives AI agents a real map of a personal music collection — local library (517 artists on a NAS), ListenBrainz listening history, and MusicBrainz metadata joined on permanent IDs. Answers "what do I own, what's duplicated, what am I missing" from any MCP client; a knowledge layer, not a playback controller.</p>
                         <div class="tech-stack">
@@ -211,6 +195,39 @@
                     <button type="submit" class="btn btn-primary">Send Message</button>
                     <div id="form-status" role="alert"></div>
                 </form>
+            </div>
+        </section>
+
+        <section id="colophon" class="section">
+            <div class="container">
+                <h2>This Site Was Built With</h2>
+                <p class="contact-intro">No frameworks, no build step — the portfolio itself is the demonstration. The source is on <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>.</p>
+                <div class="colophon-grid">
+                    <div class="colophon-item">
+                        <h4>HTML / CSS / JS</h4>
+                        <p>Hand-written, responsive, no framework.</p>
+                    </div>
+                    <div class="colophon-item">
+                        <h4>AWS Lambda</h4>
+                        <p>Serverless contact form backend.</p>
+                    </div>
+                    <div class="colophon-item">
+                        <h4>Terraform</h4>
+                        <p>Infrastructure as code, modular.</p>
+                    </div>
+                    <div class="colophon-item">
+                        <h4>CloudFront + S3</h4>
+                        <p>Global CDN, HTTPS, cache rules.</p>
+                    </div>
+                    <div class="colophon-item">
+                        <h4>GitHub Actions</h4>
+                        <p>Push-to-deploy CI/CD via OIDC.</p>
+                    </div>
+                    <div class="colophon-item">
+                        <h4>SES</h4>
+                        <p>Email delivery for the contact form.</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>

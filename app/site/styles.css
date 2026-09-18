@@ -340,6 +340,33 @@ h2::after {
     color: #555;
 }
 
+/* Colophon ("This Site Was Built With") */
+.colophon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.colophon-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.colophon-item h4 {
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+}
+
+.colophon-item p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
 form {
     max-width: 600px;
 }
@@ -480,6 +507,10 @@ footer .container {
     }
 
     .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .colophon-grid {
         grid-template-columns: 1fr;
     }
 
