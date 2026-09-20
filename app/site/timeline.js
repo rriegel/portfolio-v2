@@ -142,4 +142,104 @@
             }
         });
     }
+
+    /* ---------- Projects carousel ---------- */
+    // One card in focus at a time; prev/next buttons, dot navigation,
+    // keyboard arrows, and nav-dropdown deep links (#projects anchor +
+    // data-project index from the Projects dropdown).
+    var track = document.querySelector('.project-track');
+    var controls = document.querySelector('.project-controls');
+    if (track && controls) {
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.project-card'));
+        var dotsWrap = controls.querySelector('.carousel-dots');
+        var current = 0;
+
+        var dots = cards.map(function (card, i) {
+            var dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'carousel-dot' + (i === 0 ? ' is-active' : '');
+            dot.setAttribute('aria-label', 'Show project ' + (i + 1) + ': ' + card.querySelector('h3').textContent);
+            card.id = card.id || 'project-' + (i + 1);
+            dotsWrap.appendChild(dot);
+            dot.addEventListener('click', function () { show(i); });
+            return dot;
+        });
+
+        var show = function (idx) {
+            current = (idx + cards.length) % cards.length;
+            cards.forEach(function (card, i) {
+                card.classList.toggle('is-active', i === current);
+                card.setAttribute('aria-hidden', i === current ? 'false' : 'true');
+            });
+            dots.forEach(function (dot, i) {
+                dot.classList.toggle('is-active', i === current);
+            });
+            if (history.replaceState) history.replaceState(null, '', '#' + cards[current].id);
+        };
+
+        controls.querySelector('.carousel-prev').addEventListener('click', function () { show(current - 1); });
+        controls.querySelector('.carousel-next').addEventListener('click', function () { show(current + 1); });
+
+        document.addEventListener('keydown', function (e) {
+            var carouselVisible = track.getBoundingClientRect().width > 0 &&
+                track.getBoundingClientRect().bottom > 0;
+            if (!carouselVisible) return;
+            if (e.key === 'ArrowLeft') show(current - 1);
+            if (e.key === 'ArrowRight') show(current + 1);
+        });
+
+        // Deep-link support: #project-3 focuses that card on load
+        var m = window.location.hash.match(/^#project-(\d+)$/);
+        if (m && cards[m[1] - 1]) show(parseInt(m[1], 10) - 1);
+        else cards[0].classList.add('is-active'), cards[0].setAttribute('aria-hidden', 'false');
+    }
+
+    /* ---------- Projects nav dropdown ---------- */
+    // Hover-open dropdown listing each project; clicking an item navigates
+    // to #projects AND focuses that project's carousel card (deep link).
+    var navLinks = document.querySelector('.nav-links');
+    if (navLinks) {
+        var projectsAnchor = navLinks.querySelector('a[href="#projects"]');
+        var projectsLi = projectsAnchor ? projectsAnchor.closest('li') : null;
+        if (projectsLi && !projectsLi.classList.contains('has-dropdown')) {
+            projectsLi.classList.add('has-dropdown');
+            var dd = document.createElement('ul');
+            dd.className = 'dropdown';
+            dd.setAttribute('aria-label', 'Projects');
+            cards.forEach(function (card, i) {
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                a.href = '#projects';
+                a.textContent = card.querySelector('h3').textContent;
+                a.addEventListener('click', function () { show(i); });
+                li.appendChild(a);
+                dd.appendChild(li);
+            });
+            projectsLi.appendChild(dd);
+            projectsAnchor.setAttribute('aria-haspopup', 'true');
+            projectsAnchor.setAttribute('aria-expanded', 'false');
+
+            // Touch/keyboard: same first-tap-opens pattern as About
+            projectsAnchor.addEventListener('click', function (e) {
+                if (!projectsLi.classList.contains('is-open')) {
+                    e.preventDefault();
+                    projectsLi.classList.add('is-open');
+                    projectsAnchor.setAttribute('aria-expanded', 'true');
+                }
+            });
+            projectsLi.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && projectsLi.classList.contains('is-open')) {
+                    projectsLi.classList.remove('is-open');
+                    projectsAnchor.setAttribute('aria-expanded', 'false');
+                    projectsAnchor.focus();
+                }
+            });
+            document.addEventListener('click', function (e) {
+                if (projectsLi.classList.contains('is-open') && !projectsLi.contains(e.target)) {
+                    projectsLi.classList.remove('is-open');
+                    projectsAnchor.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    }
 })();

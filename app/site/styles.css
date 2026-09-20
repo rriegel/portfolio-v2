@@ -582,10 +582,20 @@ h2::after {
 }
 
 /* Projects Section */
-.project-grid {
+/* Projects carousel: one card in focus at a time */
+.project-carousel {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.project-track {
+    position: relative;
+    overflow: hidden;
+}
+
+/* All cards stacked in the same grid cell; the active one is visible */
+.project-track {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
 }
 
 .project-card {
@@ -595,12 +605,75 @@ h2::after {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: all 0.3s;
     border: 1px solid #e0e0e0;
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(24px);
+    pointer-events: none;
+}
+
+.project-card.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .project-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     border-color: #00d9ff;
+}
+
+.project-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.carousel-btn {
+    font-family: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    border-color: #00d9ff;
+    color: #00b8d9;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.carousel-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: #d5d5d5;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.carousel-dot.is-active {
+    background: #00d9ff;
+    transform: scale(1.2);
 }
 
 .project-card h3 {
@@ -849,8 +922,12 @@ footer .container {
         font-size: 2rem;
     }
 
-    .project-grid {
-        grid-template-columns: 1fr;
+    .project-carousel {
+        max-width: 100%;
+    }
+
+    .project-card {
+        padding: 1.5rem;
     }
 
     .colophon-grid {

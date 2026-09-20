@@ -207,7 +207,8 @@
         <section id="projects" class="section">
             <div class="container">
                 <h2>Projects</h2>
-                <div class="project-grid">
+                <div class="project-carousel">
+                    <div class="project-track">
                     <article class="project-card">
                         <h3>Self-Hosted Music MCP</h3>
                         <p class="project-description">A Model Context Protocol server that gives AI agents a real map of a personal music collection — local library (517 artists on a NAS), ListenBrainz listening history, and MusicBrainz metadata joined on permanent IDs. Answers "what do I own, what's duplicated, what am I missing" from any MCP client; a knowledge layer, not a playback controller.</p>
@@ -266,6 +267,12 @@
                             <a href="https://github.com/rriegel/qbert-game" class="project-link">GitHub</a>
                         </div>
                     </article>
+                    </div>
+                    <div class="project-controls">
+                        <button type="button" class="carousel-btn carousel-prev" aria-label="Previous project">&#8249;</button>
+                        <div class="carousel-dots" role="tablist" aria-label="Select project"></div>
+                        <button type="button" class="carousel-btn carousel-next" aria-label="Next project">&#8250;</button>
+                    </div>
                 </div>
             </div>
         </section>
