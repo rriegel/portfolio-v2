@@ -55,29 +55,26 @@
     }
 
     function positionPopover(m, node, body) {
-        // Anchor to the node; clamp horizontally inside the timeline.
-        // Vertical side matches the date side (odd nth-child = below, even = above).
+        // CSS centers the popover on the node column (left:50%) and anchors it
+        // to the spine. JS's only job: clamp so the box stays within the
+        // timeline bounds, by shifting via --pop-shift (the caret follows
+        // because it uses the same variable).
         var tl = document.querySelector('.life-timeline');
         if (!tl || !node || !body) return;
         var bw = body.offsetWidth || 240;
-        var bh = body.offsetHeight || 120;
 
-        var left = node.offsetLeft + node.offsetWidth / 2 - bw / 2;
-        var maxLeft = tl.clientWidth - bw;
-        if (left < 0) left = 0;
-        if (left > maxLeft) left = maxLeft;
-        body.style.left = left + 'px';
+        // Node column center relative to the timeline's padding box
+        var li = node.parentNode;
+        var liCenterX = li.offsetLeft + li.offsetWidth / 2;
+        var padLeft = 16; // ol horizontal padding (1rem); keep in sync with CSS
+        var centerX = padLeft + liCenterX;
 
-        var index = Array.prototype.indexOf.call(m.parentNode.children, m); // 0-based
-        var isOddChild = (index % 2 === 0); // nth-child(odd) == 1st/3rd/... == index 0/2/...
-        var nodeCenterY = node.offsetTop + node.offsetHeight / 2;
-        if (isOddChild) {
-            body.style.top = (nodeCenterY + 16) + 'px';
-            body.style.bottom = 'auto';
-        } else {
-            body.style.top = (nodeCenterY - 16 - bh) + 'px';
-            body.style.bottom = 'auto';
-        }
+        var min = bw / 2;                    // box center >= box half-width from left edge
+        var max = tl.clientWidth - bw / 2;   // ...and from the right edge
+        var shift = 0;
+        if (centerX < min) shift = min - centerX;
+        else if (centerX > max) shift = max - centerX;
+        body.style.setProperty('--pop-shift', shift.toFixed(1) + 'px');
     }
 
     milestones.forEach(function (m) {
