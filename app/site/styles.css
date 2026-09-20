@@ -46,12 +46,14 @@ nav .container {
     transform: translateX(-50%);
 }
 
-/* Brand cluster (name + social) pinned to the right edge */
+/* Brand cluster spans the header width: name hugs the left edge,
+   social icon row hugs the right. */
 .header-brand {
+    flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.15rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
 /* Social links now live in the dark header */
@@ -188,7 +190,17 @@ h2::after {
     line-height: 1.8;
 }
 
+.skills {
+  margin-bottom: 1.5rem;
+}
+
 .skills h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1a1a2e;
+}
+
+.timeline h3 {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
     color: #1a1a2e;

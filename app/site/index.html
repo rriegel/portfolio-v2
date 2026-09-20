@@ -25,7 +25,6 @@
             <div class="container">
                 <ul class="nav-links">
                     <li><a href="#about">About</a></li>
-                    <li><a href="#timeline">Timeline</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -115,18 +114,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="timeline" class="section">
-            <div class="container">
-                <h2>Timeline</h2>
-                <div class="timeline-chips" role="group" aria-label="Filter timeline by category">
-                    <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
-                    <button type="button" class="chip" data-filter="work" aria-pressed="false">Professional</button>
-                    <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
-                    <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
-                </div>
+                <div class="timeline">
+                    <h3>Timeline</h3>
+                    <div class="timeline-chips" role="group" aria-label="Filter timeline by category">
+                        <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+                        <button type="button" class="chip" data-filter="work" aria-pressed="false">Professional</button>
+                        <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
+                        <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
+                    </div>
                 <div class="life-timeline-wrap">
                     <span class="life-timeline-start" aria-hidden="true">2021</span>
                     <ol class="life-timeline">
@@ -194,7 +189,8 @@
                             <p>Built web applications for clients across a range of industries, covering API design, frontend development, and database optimization. Implemented CI/CD pipelines and improved deployment workflows.</p>
                         </div>
                     </li>
-                </ol>
+                    </ol>
+                </div>
                 </div>
             </div>
         </section>
@@ -268,7 +264,7 @@
         <section id="contact" class="section">
             <div class="container">
                 <h2>Contact</h2>
-                <p class="contact-intro">Interested in working together? Send me a message and I'll get back to you soon.</p>
+                <p class="contact-intro">Interested in working together? Send me a message and I'll get back to you soon</p>
                 <form id="contact-form">
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -291,33 +287,34 @@
         <section id="colophon" class="section">
             <div class="container">
                 <h2>This Site Was Built With</h2>
-                <p class="contact-intro">No frameworks, no build step — the portfolio itself is the demonstration. The source is on <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>.</p>
+                
                 <div class="colophon-grid">
                     <div class="colophon-item">
                         <h4>HTML / CSS / JS</h4>
-                        <p>Hand-written, responsive, no framework.</p>
+                        <p>Simple and responsive</p>
                     </div>
                     <div class="colophon-item">
                         <h4>AWS Lambda</h4>
-                        <p>Serverless contact form backend.</p>
+                        <p>Serverless backend for the contact form</p>
                     </div>
                     <div class="colophon-item">
                         <h4>Terraform</h4>
-                        <p>Infrastructure as code, modular.</p>
+                        <p>Infrastructure as code</p>
                     </div>
                     <div class="colophon-item">
                         <h4>CloudFront + S3</h4>
-                        <p>Global CDN, HTTPS, cache rules.</p>
+                        <p>Global CDN, HTTPS, cache rules</p>
                     </div>
                     <div class="colophon-item">
                         <h4>GitHub Actions</h4>
-                        <p>Push-to-deploy CI/CD via OIDC.</p>
+                        <p>Automated deployment CI/CD</p>
                     </div>
                     <div class="colophon-item">
                         <h4>SES</h4>
-                        <p>Email delivery for the contact form.</p>
+                        <p>Email delivery for the contact form</p>
                     </div>
                 </div>
+                <p class="contact-intro">You can find the source on <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>.</p>
             </div>
         </section>
     </main>
