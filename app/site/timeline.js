@@ -55,29 +55,21 @@
     }
 
     function positionPopover(m, node, body) {
-        // Anchor to the node; clamp horizontally inside the timeline.
-        // Vertical side matches the date side (odd nth-child = below, even = above).
+        // CSS centers the popover on the node column (left:50%) and anchors it
+        // to the spine. JS's only job: clamp so the box stays within the
+        // timeline bounds, by shifting via --pop-shift (the caret follows
+        // because it uses the same variable). Viewport rects avoid
+        // offsetParent ambiguity entirely.
         var tl = document.querySelector('.life-timeline');
         if (!tl || !node || !body) return;
         var bw = body.offsetWidth || 240;
-        var bh = body.offsetHeight || 120;
 
-        var left = node.offsetLeft + node.offsetWidth / 2 - bw / 2;
-        var maxLeft = tl.clientWidth - bw;
-        if (left < 0) left = 0;
-        if (left > maxLeft) left = maxLeft;
-        body.style.left = left + 'px';
-
-        var index = Array.prototype.indexOf.call(m.parentNode.children, m); // 0-based
-        var isOddChild = (index % 2 === 0); // nth-child(odd) == 1st/3rd/... == index 0/2/...
-        var nodeCenterY = node.offsetTop + node.offsetHeight / 2;
-        if (isOddChild) {
-            body.style.top = (nodeCenterY + 16) + 'px';
-            body.style.bottom = 'auto';
-        } else {
-            body.style.top = (nodeCenterY - 16 - bh) + 'px';
-            body.style.bottom = 'auto';
-        }
+        var nr = node.getBoundingClientRect();
+        var tlr = tl.getBoundingClientRect();
+        var centerX = nr.left + nr.width / 2;
+        var desiredLeft = centerX - bw / 2;
+        var clampedLeft = Math.max(tlr.left, Math.min(desiredLeft, tlr.right - bw));
+        body.style.setProperty('--pop-shift', (clampedLeft - desiredLeft).toFixed(1) + 'px');
     }
 
     milestones.forEach(function (m) {

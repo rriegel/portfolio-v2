@@ -248,6 +248,13 @@ h2::after {
     max-width: 1100px;
 }
 
+/* Half the vertical padding is the popover room; the spine sits at the
+   boundary between the two halves. Expose it as a custom property so
+   .milestone can share the exact same geometry. */
+.life-timeline {
+    --tl-half: 5.5rem; /* must equal the padding block above/below */
+}
+
 /* Horizontal spine: runs left (oldest) to right (newest), with directional detail:
    fades in from the left, arrowhead at the right (future) end, "2021" anchor label. */
 .life-timeline::before {
@@ -287,7 +294,10 @@ h2::after {
     margin: 0 auto;
 }
 
-/* Node column: everything stacks vertically inside a fixed-width cell */
+/* Node column: a real box whose vertical center IS the spine.
+   stretch makes each li span the full padding-box height of the ol
+   (padding excluded via content-box behavior of flex items), so its
+   50% line lands exactly on the spine row. */
 .milestone {
     position: relative;
     display: flex;
@@ -299,7 +309,8 @@ h2::after {
     transition: opacity 0.3s, filter 0.3s;
 }
 
-/* The node button ON the spine: pulled to vertical center via absolute pos */
+/* The node button centered on the li's vertical center (= the spine).
+   left:50% of the li == the node column center; no JS needed for X. */
 .milestone-node {
     position: absolute;
     top: 50%;
@@ -344,11 +355,13 @@ h2::after {
     white-space: nowrap;
 }
 
-/* The popover: hidden by default, anchored to the node via JS positioning */
+/* The popover: hidden by default. Horizontally centered on the node column
+   via CSS (left:50% + translateX(-50%)); JS only clamps at viewport edges
+   by nudging --pop-shift. Vertically anchored to the spine line. */
 .milestone-body {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 50%;
+    top: calc(50% + var(--pop-gap, 18px));
     width: 240px;
     background: white;
     border: 1px solid #e0e0e0;
@@ -360,6 +373,13 @@ h2::after {
     transition: opacity 0.2s, visibility 0.2s;
     z-index: 30;
     pointer-events: none;
+    transform: translateX(calc(-50% + var(--pop-shift, 0px)));
+}
+
+/* Even milestones open upward */
+.milestone:nth-child(even) .milestone-body {
+    top: auto;
+    bottom: calc(50% + var(--pop-gap, 18px));
 }
 
 .milestone:hover .milestone-body,
@@ -369,31 +389,31 @@ h2::after {
     visibility: visible;
 }
 
-/* Small caret pointing at the node */
+/* Caret: centered on the popover's node-facing edge, shifted identically
+   so it keeps pointing at the node even when the box is clamped. */
 .milestone-body::before {
     content: '';
     position: absolute;
-    left: 50%;
-    width: 10px;
-    height: 10px;
-    background: inherit;
+    left: calc(50% - var(--pop-shift, 0px));
+    width: 12px;
+    height: 12px;
+    background: white;
     border-left: 1px solid #e0e0e0;
     border-top: 1px solid #e0e0e0;
     transform: translateX(-50%) rotate(45deg);
 }
 
 .milestone:nth-child(odd) .milestone-body::before {
-    top: -6px;
+    top: -7px;
 }
 
 .milestone:nth-child(even) .milestone-body::before {
     top: auto;
-    bottom: -6px;
+    bottom: -7px;
     border-left: none;
     border-top: none;
     border-right: 1px solid #e0e0e0;
     border-bottom: 1px solid #e0e0e0;
-    transform: translateX(-50%) rotate(45deg);
 }
 
 /* Dates hug the spine on the opposite side from the popover */
