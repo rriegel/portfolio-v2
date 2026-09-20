@@ -110,4 +110,36 @@
             });
         }, 150);
     });
+
+    /* ---------- About dropdown (touch + keyboard) ---------- */
+    // Desktop opens on hover via CSS. Touch devices and keyboard users get
+    // this tap/click toggle on the li (the About link itself still navigates;
+    // users pick a subsection from the dropdown). Escape closes.
+    var dropdownLi = document.querySelector('.nav-links .has-dropdown');
+    if (dropdownLi) {
+        var aboutLink = dropdownLi.querySelector(':scope > a');
+        aboutLink.addEventListener('click', function (e) {
+            // First tap opens the menu; second tap follows the #about link.
+            if (!dropdownLi.classList.contains('is-open')) {
+                e.preventDefault();
+                dropdownLi.classList.add('is-open');
+                aboutLink.setAttribute('aria-expanded', 'true');
+            }
+        });
+
+        dropdownLi.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && dropdownLi.classList.contains('is-open')) {
+                dropdownLi.classList.remove('is-open');
+                aboutLink.setAttribute('aria-expanded', 'false');
+                aboutLink.focus();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (dropdownLi.classList.contains('is-open') && !dropdownLi.contains(e.target)) {
+                dropdownLi.classList.remove('is-open');
+                aboutLink.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 })();

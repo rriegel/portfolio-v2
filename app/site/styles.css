@@ -89,6 +89,53 @@ nav .container {
     color: #00d9ff;
 }
 
+/* About dropdown: hidden by default; opens on hover (desktop) or via
+   .is-open class (touch/keyboard, toggled in timeline.js) */
+.has-dropdown {
+    position: relative;
+}
+
+.dropdown {
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0.5rem 0;
+    background: #16213e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    min-width: 11rem;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 50;
+}
+
+.dropdown li {
+    width: 100%;
+}
+
+.dropdown a {
+    display: block;
+    padding: 0.5rem 1.25rem;
+    white-space: nowrap;
+}
+
+.dropdown a:hover {
+    background: rgba(0, 217, 255, 0.1);
+}
+
+.has-dropdown:hover .dropdown,
+.has-dropdown.is-open .dropdown {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Sections */
 .section {
     padding: 5rem 0;
@@ -749,6 +796,35 @@ footer .container {
         position: static;
         transform: none;
         gap: 1rem;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Mobile: dropdown opens via .is-open tap, renders in-flow */
+    .has-dropdown {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .dropdown {
+        position: static;
+        transform: none;
+        display: none;
+        text-align: center;
+        box-shadow: none;
+        padding: 0.25rem 0;
+    }
+
+    .has-dropdown:hover .dropdown {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .has-dropdown.is-open .dropdown {
+        opacity: 1;
+        visibility: visible;
+        display: flex;
     }
 
     .header-brand {
