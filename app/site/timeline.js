@@ -58,23 +58,18 @@
         // CSS centers the popover on the node column (left:50%) and anchors it
         // to the spine. JS's only job: clamp so the box stays within the
         // timeline bounds, by shifting via --pop-shift (the caret follows
-        // because it uses the same variable).
+        // because it uses the same variable). Viewport rects avoid
+        // offsetParent ambiguity entirely.
         var tl = document.querySelector('.life-timeline');
         if (!tl || !node || !body) return;
         var bw = body.offsetWidth || 240;
 
-        // Node column center relative to the timeline's padding box
-        var li = node.parentNode;
-        var liCenterX = li.offsetLeft + li.offsetWidth / 2;
-        var padLeft = 16; // ol horizontal padding (1rem); keep in sync with CSS
-        var centerX = padLeft + liCenterX;
-
-        var min = bw / 2;                    // box center >= box half-width from left edge
-        var max = tl.clientWidth - bw / 2;   // ...and from the right edge
-        var shift = 0;
-        if (centerX < min) shift = min - centerX;
-        else if (centerX > max) shift = max - centerX;
-        body.style.setProperty('--pop-shift', shift.toFixed(1) + 'px');
+        var nr = node.getBoundingClientRect();
+        var tlr = tl.getBoundingClientRect();
+        var centerX = nr.left + nr.width / 2;
+        var desiredLeft = centerX - bw / 2;
+        var clampedLeft = Math.max(tlr.left, Math.min(desiredLeft, tlr.right - bw));
+        body.style.setProperty('--pop-shift', (clampedLeft - desiredLeft).toFixed(1) + 'px');
     }
 
     milestones.forEach(function (m) {
