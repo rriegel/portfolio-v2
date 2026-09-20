@@ -182,13 +182,6 @@ h2::after {
 }
 
 /* About Section */
-.about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 3rem;
-}
-
 .about-text p {
     margin-bottom: 1rem;
     font-size: 1.1rem;
@@ -760,11 +753,6 @@ footer .container {
 
     .hero-subtitle {
         font-size: 1rem;
-    }
-
-    .about-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
     }
 
     h2 {
