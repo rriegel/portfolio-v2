@@ -75,6 +75,7 @@
                 m.removeAttribute('data-dim');
             } else {
                 m.setAttribute('data-dim', '');
+                if (m.classList.contains('is-open')) closePopover(m);
             }
         });
         chips.forEach(function (c) {
@@ -133,6 +134,7 @@
 
         node.addEventListener('click', function (e) {
             e.stopPropagation();
+            if (m.hasAttribute('data-dim')) return; // filtered out
             if (m.classList.contains('is-open')) {
                 closePopover(m);
             } else {

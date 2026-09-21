@@ -607,10 +607,20 @@ h2::after {
     margin: 0;
 }
 
-/* Ghost overlay: non-matching milestones dim but stay in place */
+/* Ghost overlay: non-matching milestones dim but stay in place, and can't
+   be interacted with — no hover popover, no tap-to-open while filtered out. */
 .milestone[data-dim] {
     opacity: 0.35;
     filter: saturate(0.4);
+}
+
+.milestone[data-dim] .milestone-node {
+    pointer-events: none;
+}
+
+.milestone[data-dim] .milestone-body {
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 /* Projects Section */
