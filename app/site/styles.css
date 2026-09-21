@@ -332,14 +332,39 @@ h2::after {
     transition: all 0.2s;
 }
 
-.chip:hover {
+/* Chip colors match their node colors on the timeline */
+.chip[data-filter="work"] {
     border-color: #00d9ff;
-    color: #00b8d9;
 }
 
-.chip[aria-pressed="true"] {
+.chip[data-filter="run"] {
+    border-color: #2ecc71;
+}
+
+.chip[data-filter="hobby"] {
+    border-color: #f39c12;
+}
+
+.chip[data-filter="work"]:hover { color: #00b8d9; }
+.chip[data-filter="run"]:hover { color: #27ae60; }
+.chip[data-filter="hobby"]:hover { color: #e67e22; }
+
+/* Selected: filled with the node color */
+.chip[aria-pressed="true"][data-filter="work"] {
     background: #00d9ff;
     border-color: #00d9ff;
+    color: #1a1a2e;
+}
+
+.chip[aria-pressed="true"][data-filter="run"] {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: white;
+}
+
+.chip[aria-pressed="true"][data-filter="hobby"] {
+    background: #f39c12;
+    border-color: #f39c12;
     color: #1a1a2e;
 }
 
@@ -542,7 +567,7 @@ h2::after {
     flex: 0 0 auto;
     position: relative;
     align-self: center;
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #999;
     background: none;
@@ -552,7 +577,7 @@ h2::after {
     line-height: 1;
     /* the li is a full-height flex item (align-self: center); push the text
        above the spine: translate up past the center line */
-    transform: translateY(-2.1rem);
+    transform: translateY(-2.2rem);
 }
 
 /* Popover date stamp */

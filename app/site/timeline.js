@@ -66,12 +66,17 @@
         });
     })();
 
-    /* ---------- chip filtering ---------- */
+    /* ---------- chip filtering (multi-select) ---------- */
+    // Categories toggle independently: a selected category adds its nodes to
+    // the view; deselecting removes them. Professional starts selected (set
+    // in the markup). Empty selection shows nothing.
+    var selected = ['work'];
 
-    function applyFilter(filter) {
+    function applyFilter() {
         milestones.forEach(function (m) {
             var cats = (m.getAttribute('data-cat') || '').split(/\s+/);
-            if (filter === 'all' || cats.indexOf(filter) !== -1) {
+            var matches = cats.some(function (c) { return selected.indexOf(c) !== -1; });
+            if (matches) {
                 m.removeAttribute('data-dim');
             } else {
                 m.setAttribute('data-dim', '');
@@ -79,17 +84,24 @@
             }
         });
         chips.forEach(function (c) {
-            c.setAttribute('aria-pressed', c.getAttribute('data-filter') === filter ? 'true' : 'false');
+            c.setAttribute('aria-pressed', selected.indexOf(c.getAttribute('data-filter')) !== -1 ? 'true' : 'false');
         });
     }
 
     chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
             var filter = chip.getAttribute('data-filter');
-            var isActive = chip.getAttribute('aria-pressed') === 'true';
-            applyFilter(isActive && filter !== 'all' ? 'all' : filter);
+            var idx = selected.indexOf(filter);
+            if (idx === -1) {
+                selected.push(filter);
+            } else {
+                selected.splice(idx, 1);
+            }
+            applyFilter();
         });
     });
+
+    applyFilter();
 
     /* ---------- popovers ---------- */
 

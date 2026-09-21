@@ -127,14 +127,29 @@
                 <hr class="subsection-divider">
                 <div class="timeline">
                     <h3>Timeline</h3>
-                    <div class="timeline-chips" role="group" aria-label="Filter timeline by category">
-                        <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
-                        <button type="button" class="chip" data-filter="work" aria-pressed="false">Professional</button>
+                    <div class="timeline-chips" role="group" aria-label="Filter timeline by category (multiple allowed)">
+                        <button type="button" class="chip" data-filter="work" aria-pressed="true">Professional</button>
                         <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
                         <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
                     </div>
                 <div class="life-timeline-wrap">
                     <ol class="life-timeline">
+                      <li class="milestone" data-date="2019-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2019 — Pittsburgh Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2019 Pittsburgh Half Marathon</h4>
+                              <p>I completed my first half marathon in Pittsburgh. It was an extremely rewarding experience kickstarted my long distance running journey.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2019-11" data-cat="work">
+                          <button type="button" class="milestone-node" aria-label="Nov 2019 — Research Technologist at Johns Hopkins University (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Work</span> Research Technologist @ Johns Hopkins University</h4>
+                              <p>Research Technologist in the Center for Hearing and Balance in the School of Medicine. Experienced in performing Auditory Brainstem Response (ABR) recording, Vestibular Evoked Potential (VsEP) recording, and other various auditory and vestibular function assessments.</p>
+                          </div>
+                      </li>
                       <li class="milestone" data-date="2021-11" data-cat="work">
                           <button type="button" class="milestone-node" aria-label="Nov 2021 — Software Engineer at Seisan Consulting (details)" aria-expanded="false"></button>
                           <span class="milestone-date"></span>
@@ -149,6 +164,14 @@
                           <div class="milestone-body" role="tooltip">
                               <h4><span class="milestone-cat">Running</span> 2024 Pittsburgh Marathon</h4>
                               <p>I completed my first marathon in Pittsburgh. Prior to committing to this, I had always viewed the marathon distance as out of reach for myself. But through dedicated training with my friends, I was able to complete the race with a time of 3:45!</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2024-10" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="Oct 2024 - Ann Arbor Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2024 Ann Arbor Half Marathon</h4>
+                              <p>We visited Ann Arbor to check out apartments and run the half marathon. It was a great way to see the town I'd call home for a few years.</p>
                           </div>
                       </li>
                       <li class="milestone" data-date="2024-12" data-cat="work">
