@@ -88,7 +88,12 @@
         });
         if (!isFinite(axisStart) || !isFinite(axisEnd)) return;
         var span = Math.max(1, axisEnd - axisStart);
-        var pct = function (months) { return (months - axisStart) / span * 100; };
+        // Map into an inset range so the first/last nodes never sit exactly
+        // on the container edge (unhoverable dead zone + clipped labels).
+        var EDGE = 1.5; // percent
+        var pct = function (months) {
+            return EDGE + (months - axisStart) / span * (100 - 2 * EDGE);
+        };
 
         // 1. place each milestone li at its date (--x so mobile can reset)
         events.forEach(function (e) {
@@ -241,8 +246,28 @@
         node.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && m.classList.contains('is-open')) {
                 closePopover(m);
-                node.focus();
+                // release focus: after a press-then-Escape sequence Chromium
+                // keeps :focus-visible on the node, and the CSS rule
+                // .milestone-node:focus-visible ... would reopen the popover
+                node.blur();
             }
+        });
+
+        // Hover mirrors the CSS hover-popover: entering shows the bar,
+        // leaving hides it — unless the popover is click-pinned (is-open),
+        // in which case the bar stays until the popover closes. Dimmed
+        // nodes ignore pointer events, but guard anyway.
+        m.addEventListener('mouseenter', function () {
+            if (m.hasAttribute('data-dim')) return;
+            var idx = Array.prototype.indexOf.call(milestones, m);
+            var bar = bars.filter(function (b) { return b.getAttribute('data-for') === String(idx); })[0];
+            if (bar) bar.classList.add('is-visible');
+        });
+        m.addEventListener('mouseleave', function () {
+            if (m.classList.contains('is-open')) return; // click-pinned stays
+            var idx = Array.prototype.indexOf.call(milestones, m);
+            var bar = bars.filter(function (b) { return b.getAttribute('data-for') === String(idx); })[0];
+            if (bar) bar.classList.remove('is-visible');
         });
     });
 
