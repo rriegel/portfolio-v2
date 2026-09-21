@@ -10,6 +10,7 @@
     var chips = document.querySelectorAll('.timeline-chips .chip');
     var milestones = document.querySelectorAll('.life-timeline .milestone');
     var ol = document.querySelector('.life-timeline');
+    var bars = []; // duration bars, synced with popover visibility
     if (!chips.length || !milestones.length || !ol) return;
 
     /* ---------- month labels + year group markers ---------- */
@@ -108,44 +109,25 @@
             ol.appendChild(marker);
         }
 
-        // 3. duration bars, lane-staggered where spans overlap
+        // 3. duration bars: hidden until the event's details open; then the
+        // bar appears ON the axis as a thicker highlighted line. Each bar
+        // carries data-for=<event index> for syncing with popover state.
         var barsWrap = document.createElement('div');
         barsWrap.className = 'timeline-bars';
         barsWrap.setAttribute('aria-hidden', 'true');
         ol.appendChild(barsWrap);
 
-        var lanes = []; // lanes[i] = last end month occupying lane i
-        function findLane(start, end) {
-            for (var i = 0; i < lanes.length; i++) {
-                if (start > lanes[i]) {  // strictly after: touching bars stagger
-                    lanes[i] = end;
-                    return i;
-                }
-            }
-            lanes.push(end);
-            return lanes.length - 1;
-        }
-
-        events.forEach(function (e) {
+        events.forEach(function (e, ei) {
             if (e.end === null && !e.open) return; // point event: dot only
             var endMonth = e.end !== null ? e.end : axisEnd;
-            var lane = findLane(e.start, endMonth);
             var bar = document.createElement('div');
             bar.className = 'timeline-bar timeline-bar-' + (e.el.getAttribute('data-cat') || 'work') +
-                            (e.open ? ' timeline-bar-open' : '') + ' timeline-bar-' + lane;
+                            (e.open ? ' timeline-bar-open' : '');
             bar.style.left = pct(e.start).toFixed(2) + '%';
             bar.style.width = (pct(endMonth) - pct(e.start)).toFixed(2) + '%';
-            // label inside the band (title from the popover h4, minus cat tag)
-            var h4 = e.el.querySelector('.milestone-body h4');
-            var catSpan = h4 ? h4.querySelector('.milestone-cat') : null;
-            var title = h4 ? (catSpan ? h4.textContent.replace(catSpan.textContent, '') : h4.textContent).trim() : '';
-            if (title) {
-                var label = document.createElement('span');
-                label.className = 'bar-label';
-                label.textContent = title;
-                bar.appendChild(label);
-            }
+            bar.setAttribute('data-for', String(ei));
             barsWrap.appendChild(bar);
+            bars.push(bar);
         });
 
         // 4. reposition popovers after layout shifts (dates/nodes moved)
@@ -203,6 +185,10 @@
         m.classList.remove('is-open');
         var node = m.querySelector('.milestone-node');
         if (node) node.setAttribute('aria-expanded', 'false');
+        // hide the event's duration bar (if it has one)
+        var idx = Array.prototype.indexOf.call(milestones, m);
+        var bar = bars.filter(function (b) { return b.getAttribute('data-for') === String(idx); })[0];
+        if (bar) bar.classList.remove('is-visible');
     }
 
     function openPopover(m) {
@@ -214,6 +200,10 @@
         var body = m.querySelector('.milestone-body');
         if (node) node.setAttribute('aria-expanded', 'true');
         if (body) positionPopover(m, node, body);
+        // show the event's duration bar (if it has one)
+        var idx = Array.prototype.indexOf.call(milestones, m);
+        var bar = bars.filter(function (b) { return b.getAttribute('data-for') === String(idx); })[0];
+        if (bar) bar.classList.add('is-visible');
     }
 
     function positionPopover(m, node, body) {
