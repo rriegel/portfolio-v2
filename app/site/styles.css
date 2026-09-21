@@ -348,7 +348,7 @@ h2::after {
     list-style: none;
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
     padding: 5.5rem 1rem 5.5rem 1rem;

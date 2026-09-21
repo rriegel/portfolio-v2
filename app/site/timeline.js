@@ -12,10 +12,10 @@
     if (!chips.length || !milestones.length) return;
 
     /* ---------- month labels + year group markers ---------- */
-    // Each milestone carries data-date="YYYY-MM" (newest first). The date
-    // span at each node shows the month only; a year marker is inserted on
-    // the axis between each year's group of events (and at the far right
-    // edge for the oldest year). Popover titles gain a "Month Year" stamp.
+    // Each milestone carries data-date="YYYY-MM", oldest first in the DOM
+    // (the axis renders left->right, so 2021 sits at the left edge). The date
+    // span at each node shows the month only; a year marker is inserted after
+    // each year's last event. Popover titles gain a "Month Year" stamp.
     var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
