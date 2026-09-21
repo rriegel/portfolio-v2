@@ -369,14 +369,10 @@ h2::after {
 }
 
 .life-timeline {
-    --tl-half: 5.5rem;
     list-style: none;
     position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-    padding: 5.5rem 1rem 5.5rem 1rem;
+    display: block;
+    height: var(--tl-half, 5.5rem);
     margin: 0 auto;
     max-width: 1100px;
 }
@@ -425,11 +421,13 @@ h2::after {
    (padding excluded via content-box behavior of flex items), so its
    50% line lands exactly on the spine row. */
 .milestone {
-    position: relative;
+    position: absolute;
+    left: var(--x, 0%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1 1 0;
     min-width: 0;
     padding: 0 0.25rem;
     transition: opacity 0.3s, filter 0.3s;
@@ -475,6 +473,7 @@ h2::after {
 
 /* Dates: alternate above/below the spine by nth-child parity */
 .milestone-date {
+    position: absolute;
     font-weight: 700;
     font-size: 0.95rem;
     color: #666;
@@ -560,13 +559,13 @@ h2::after {
     white-space: nowrap;
 }
 
-/* Year group markers: flex items in the row (their slot lands between year
-   groups). Plain text — no pill — floating a bit above the spine so they
-   label the groups without occupying the line itself. */
+/* Year group markers: plain text floating above the spine, positioned by
+   JS at their month offset (left set inline). */
 .year-marker {
-    flex: 0 0 auto;
-    position: relative;
-    align-self: center;
+    position: absolute;
+    left: var(--x, 0%);
+    top: 50%;
+    transform: translate(-50%, calc(-50% - 2.6rem));
     font-size: 1.1rem;
     font-weight: 700;
     color: #999;
@@ -575,10 +574,88 @@ h2::after {
     border: none;
     white-space: nowrap;
     line-height: 1;
-    /* the li is a full-height flex item (align-self: center); push the text
-       above the spine: translate up past the center line */
-    transform: translateY(-2.2rem);
+    z-index: 1;
 }
+
+/* Ticks on the spine at each year boundary */
+.year-marker::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 0.45rem);
+    transform: translateX(-50%);
+    width: 2px;
+    height: 0.7rem;
+    background: #ccc;
+}
+
+/* Duration bars: rounded bands spanning an item's [start..end] months,
+   positioned by JS (left/width %). Lane = which overlap row the bar sits
+   in (0 = just below spine, 1 = further below). Open-ended bars get an
+   arrowhead at the right edge. */
+.timeline-bars {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 0;
+}
+
+.timeline-bar {
+    position: absolute;
+    top: 1.1rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    transform: translateY(-50%);
+}
+
+.timeline-bar-0 { top: 1.35rem; }
+.timeline-bar-1 { top: 2.75rem; }
+
+.timeline-bar-work { background: #00d9ff; }
+.timeline-bar-run { background: #2ecc71; }
+.timeline-bar-hobby { background: #f39c12; }
+
+/* Ongoing: dashed fade at the right edge + open arrowhead */
+.timeline-bar-open {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-image: linear-gradient(to right, rgba(0,0,0,0) 70%, rgba(0,0,0,0.12));
+}
+
+.timeline-bar-open::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 10px solid;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left-color: inherit;
+}
+
+.timeline-bar-open.timeline-bar-hobby::after { border-left-color: #f39c12; }
+.timeline-bar-open.timeline-bar-work::after { border-left-color: #00d9ff; }
+.timeline-bar-open.timeline-bar-run::after { border-left-color: #2ecc71; }
+
+/* Bar labels: item title inside the band when wide enough (JS adds span) */
+.timeline-bar .bar-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.timeline-bar-work .bar-label { color: #1a1a2e; }
+.timeline-bar-hobby .bar-label { color: #1a1a2e; }
 
 /* Popover date stamp */
 .milestone-stamp {
@@ -1036,6 +1113,9 @@ footer .container {
     .milestone {
         display: block;
         position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
         padding: 0 0 2rem 1.5rem;
         min-height: 0;
     }
@@ -1061,8 +1141,16 @@ footer .container {
         margin-bottom: 0.4rem;
     }
 
+    /* Mobile: duration bars are a desktop overlay; the stacked cards
+       carry duration info via their own layout. */
+    .timeline-bars {
+        display: none;
+    }
+
     /* Mobile: year markers become inline separators between year groups */
     .year-marker {
+        position: static;
+        transform: none;
         align-self: auto;
         justify-content: flex-start;
         margin: 0.75rem 0 0.25rem -1.5rem;

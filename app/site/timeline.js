@@ -9,7 +9,8 @@
 
     var chips = document.querySelectorAll('.timeline-chips .chip');
     var milestones = document.querySelectorAll('.life-timeline .milestone');
-    if (!chips.length || !milestones.length) return;
+    var ol = document.querySelector('.life-timeline');
+    if (!chips.length || !milestones.length || !ol) return;
 
     /* ---------- month labels + year group markers ---------- */
     // Each milestone carries data-date="YYYY-MM", oldest first in the DOM
@@ -28,42 +29,135 @@
         var d = dateOf(m);
         var dateSpan = m.querySelector('.milestone-date');
         if (dateSpan) dateSpan.textContent = MONTHS[d.m - 1] || '';
-        // stamp the popover with month + year
+        // stamp the popover with month/year (+ duration when data-end exists)
         var h4 = m.querySelector('.milestone-body h4');
         if (h4) {
+            var start = m.getAttribute('data-date');
+            var end = m.getAttribute('data-end');
+            var text = MONTHS[d.m - 1] + ' ' + d.y;
+            if (end) {
+                var v = end.split('-');
+                var endText = end === 'present' ? 'present' : (MONTHS[parseInt(v[1], 10) - 1] || '') + ' ' + v[0];
+                text = text + ' - ' + endText;
+                if (end !== 'present') {
+                    var s = (d.y | 0) * 12 + d.m - 1;
+                    var e2 = (parseInt(v[0], 10) | 0) * 12 + (parseInt(v[1], 10) | 0) - 1;
+                    var mos = e2 - s;
+                    var yrs = Math.floor(mos / 12), rem = mos % 12;
+                    var dur = yrs === 0 ? rem + ' mo' : (rem ? yrs + ' yr ' + rem + ' mo' : yrs + ' yr' + (yrs > 1 ? 's' : ''));
+                    text = text + ' (' + dur + ')';
+                }
+            }
             var stamp = document.createElement('span');
             stamp.className = 'milestone-stamp';
-            stamp.textContent = MONTHS[d.m - 1] + ' ' + d.y;
+            stamp.textContent = text;
             h4.parentNode.insertBefore(stamp, h4);
         }
     });
 
-    // Year markers: inserted BEFORE the first milestone of each year, so the
-    // label introduces the group it belongs to (2021 label left of the 2021
-    // node). With chronological left->right rendering, the first year's
-    // marker sits at the far left edge; there is no trailing marker after
-    // the final year.
-    (function insertYearMarkers() {
-        var ol = document.querySelector('.life-timeline');
+    /* ---------- time-proportional axis + duration bars ---------- */
+    // Axis spans [earliest start .. latest end]. Each li is absolutely
+    // positioned at its month offset (X% = (start-first)/(last-first)).
+    // Items with data-end render as rounded bars in the .timeline-bars
+    // overlay, lane-staggered where they'd overlap. Year labels sit at
+    // real year boundaries; open-ended items get an arrow to the axis end.
+    (function proportionalLayout() {
         if (!ol) return;
-        var yearsSeen = [];
+        var monthsOf = function (ym) {
+            var v = (ym || '').split('-');
+            return (parseInt(v[0], 10) || 0) * 12 + (parseInt(v[1], 10) || 1) - 1;
+        };
+
+        var events = [];
         milestones.forEach(function (m) {
-            var y = dateOf(m).y;
-            if (yearsSeen.indexOf(y) === -1) yearsSeen.push(y);
-        });
-        yearsSeen.forEach(function (year) {
-            // find first li of this year; insert the marker before it
-            var firstM = null;
-            milestones.forEach(function (m) {
-                if (!firstM && dateOf(m).y === year) firstM = m;
+            var endAttr = m.getAttribute('data-end');
+            events.push({
+                el: m,
+                start: monthsOf(m.getAttribute('data-date')),
+                end: !endAttr ? null : (endAttr === 'present' ? null : monthsOf(endAttr)),
+                open: endAttr === 'present'
             });
-            if (!firstM) return;
+        });
+
+        var axisStart = Infinity, axisEnd = -Infinity;
+        events.forEach(function (e) {
+            axisStart = Math.min(axisStart, e.start);
+            var eEnd = e.end !== null ? e.end : e.start;
+            axisEnd = Math.max(axisEnd, eEnd);
+        });
+        if (!isFinite(axisStart) || !isFinite(axisEnd)) return;
+        var span = Math.max(1, axisEnd - axisStart);
+        var pct = function (months) { return (months - axisStart) / span * 100; };
+
+        // 1. place each milestone li at its date (--x so mobile can reset)
+        events.forEach(function (e) {
+            e.el.style.setProperty('--x', pct(e.start).toFixed(2) + '%');
+        });
+
+        // 2. year labels at Jan of each year in span (plain text, above axis)
+        var firstYear = Math.floor(axisStart / 12);
+        var lastYear = Math.floor(axisEnd / 12);
+        for (var y = firstYear; y <= lastYear; y++) {
+            var boundary = y * 12; // Jan of y
+            if (boundary < axisStart || boundary > axisEnd) continue;
             var marker = document.createElement('li');
             marker.className = 'year-marker';
             marker.setAttribute('aria-hidden', 'true');
-            marker.textContent = year;
-            ol.insertBefore(marker, firstM);
+            marker.textContent = String(y);
+            marker.style.setProperty('--x', pct(boundary).toFixed(2) + '%');
+            ol.appendChild(marker);
+        }
+
+        // 3. duration bars, lane-staggered where spans overlap
+        var barsWrap = document.createElement('div');
+        barsWrap.className = 'timeline-bars';
+        barsWrap.setAttribute('aria-hidden', 'true');
+        ol.appendChild(barsWrap);
+
+        var lanes = []; // lanes[i] = last end month occupying lane i
+        function findLane(start, end) {
+            for (var i = 0; i < lanes.length; i++) {
+                if (start > lanes[i]) {  // strictly after: touching bars stagger
+                    lanes[i] = end;
+                    return i;
+                }
+            }
+            lanes.push(end);
+            return lanes.length - 1;
+        }
+
+        events.forEach(function (e) {
+            if (e.end === null && !e.open) return; // point event: dot only
+            var endMonth = e.end !== null ? e.end : axisEnd;
+            var lane = findLane(e.start, endMonth);
+            var bar = document.createElement('div');
+            bar.className = 'timeline-bar timeline-bar-' + (e.el.getAttribute('data-cat') || 'work') +
+                            (e.open ? ' timeline-bar-open' : '') + ' timeline-bar-' + lane;
+            bar.style.left = pct(e.start).toFixed(2) + '%';
+            bar.style.width = (pct(endMonth) - pct(e.start)).toFixed(2) + '%';
+            // label inside the band (title from the popover h4, minus cat tag)
+            var h4 = e.el.querySelector('.milestone-body h4');
+            var catSpan = h4 ? h4.querySelector('.milestone-cat') : null;
+            var title = h4 ? (catSpan ? h4.textContent.replace(catSpan.textContent, '') : h4.textContent).trim() : '';
+            if (title) {
+                var label = document.createElement('span');
+                label.className = 'bar-label';
+                label.textContent = title;
+                bar.appendChild(label);
+            }
+            barsWrap.appendChild(bar);
         });
+
+        // 4. reposition popovers after layout shifts (dates/nodes moved)
+        var reposition = function () {
+            milestones.forEach(function (m) {
+                if (m.classList.contains('is-open')) {
+                    positionPopover(m, m.querySelector('.milestone-node'), m.querySelector('.milestone-body'));
+                }
+            });
+        };
+        window.addEventListener('resize', reposition);
+        window.addEventListener('load', reposition);
     })();
 
     /* ---------- chip filtering (multi-select) ---------- */
