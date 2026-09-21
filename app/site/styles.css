@@ -517,7 +517,8 @@ h2::after {
     border-bottom: 1px solid #e0e0e0;
 }
 
-/* Dates hug the spine on the opposite side from the popover */
+/* Dates hug the spine on the opposite side from the popover; the JS fills
+   in the month (data-date="YYYY-MM"). */
 .milestone:nth-child(odd) .milestone-date {
     position: absolute;
     bottom: calc(50% + 12px);
@@ -532,6 +533,38 @@ h2::after {
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
+}
+
+/* Year group markers: flex items in the row (their slot lands between year
+   groups), visually pinned ON the axis line. */
+.year-marker {
+    flex: 0 0 auto;
+    position: relative;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #00b8d9;
+    background: #1a1a2e;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid #00d9ff;
+    white-space: nowrap;
+    z-index: 3;
+    line-height: 1.4;
+}
+
+/* Popover date stamp */
+.milestone-stamp {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #00b8d9;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
 }
 
 .milestone-body h4 {
@@ -994,6 +1027,17 @@ footer .container {
         position: static;
         transform: none;
         margin-bottom: 0.4rem;
+    }
+
+    /* Mobile: year markers become inline separators between year groups */
+    .year-marker {
+        align-self: auto;
+        justify-content: flex-start;
+        margin: 0.75rem 0 0.25rem -1.5rem;
+        border: none;
+        background: none;
+        padding: 0;
+        color: #00b8d9;
     }
 
     .milestone-body {
