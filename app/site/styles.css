@@ -536,24 +536,23 @@ h2::after {
 }
 
 /* Year group markers: flex items in the row (their slot lands between year
-   groups), visually pinned ON the axis line. */
+   groups). Plain text — no pill — floating a bit above the spine so they
+   label the groups without occupying the line itself. */
 .year-marker {
     flex: 0 0 auto;
     position: relative;
     align-self: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #00b8d9;
-    background: #1a1a2e;
-    padding: 0.15rem 0.55rem;
-    border-radius: 999px;
-    border: 1px solid #00d9ff;
+    color: #999;
+    background: none;
+    padding: 0;
+    border: none;
     white-space: nowrap;
-    z-index: 3;
-    line-height: 1.4;
+    line-height: 1;
+    /* the li is a full-height flex item (align-self: center); push the text
+       above the spine: translate up past the center line */
+    transform: translateY(-2.1rem);
 }
 
 /* Popover date stamp */
