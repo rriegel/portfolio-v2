@@ -38,30 +38,31 @@
         }
     });
 
-    // Year markers: inserted after the last milestone of each year EXCEPT the
-    // oldest year's marker, which goes after the final li (far right edge).
-    // Markers sit ON the axis (absolute, top:50%), alternating above/below.
+    // Year markers: inserted BEFORE the first milestone of each year, so the
+    // label introduces the group it belongs to (2021 label left of the 2021
+    // node). With chronological left->right rendering, the first year's
+    // marker sits at the far left edge; there is no trailing marker after
+    // the final year.
     (function insertYearMarkers() {
         var ol = document.querySelector('.life-timeline');
         if (!ol) return;
         var yearsSeen = [];
-        milestones.forEach(function (m, i) {
+        milestones.forEach(function (m) {
             var y = dateOf(m).y;
             if (yearsSeen.indexOf(y) === -1) yearsSeen.push(y);
         });
-        yearsSeen.forEach(function (year, yi) {
-            // find last li of this year
-            var lastIdx = -1;
-            milestones.forEach(function (m, i) {
-                if (dateOf(m).y === year && i > lastIdx) lastIdx = i;
+        yearsSeen.forEach(function (year) {
+            // find first li of this year; insert the marker before it
+            var firstM = null;
+            milestones.forEach(function (m) {
+                if (!firstM && dateOf(m).y === year) firstM = m;
             });
-            if (lastIdx === -1) return;
+            if (!firstM) return;
             var marker = document.createElement('li');
-            marker.className = 'year-marker' + (yi % 2 === 1 ? ' year-marker-below' : '');
+            marker.className = 'year-marker';
             marker.setAttribute('aria-hidden', 'true');
             marker.textContent = year;
-            var ref = milestones[lastIdx].nextSibling;
-            ol.insertBefore(marker, ref);
+            ol.insertBefore(marker, firstM);
         });
     })();
 
