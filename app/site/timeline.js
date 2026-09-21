@@ -118,7 +118,7 @@
         // offsetParent ambiguity entirely.
         var tl = document.querySelector('.life-timeline');
         if (!tl || !node || !body) return;
-        var bw = body.offsetWidth || 240;
+        var bw = body.offsetWidth || 340;
 
         var nr = node.getBoundingClientRect();
         var tlr = tl.getBoundingClientRect();
