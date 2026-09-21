@@ -630,12 +630,10 @@ h2::after {
     margin: 0 auto;
 }
 
-.project-track {
-    position: relative;
-    overflow: hidden;
-}
-
-/* All cards stacked in the same grid cell; the active one is visible */
+/* All cards stack in the same grid cell; the active one is visible.
+   No overflow mask: inactive cards are fully hidden (opacity 0 +
+   visibility hidden), and a mask would clip the active card's hover
+   lift and top border. */
 .project-track {
     display: grid;
 }
