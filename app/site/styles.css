@@ -1292,7 +1292,10 @@ footer .container {
         position: static;
         transform: none;
         white-space: normal;
-        margin-bottom: 0.4rem;
+        /* static position lands at ol 2rem + li 1.5rem padding (56px from
+           the spine); pull the label back to ~10px so it sits just right
+           of the 14px node dots */
+        margin: 0 0 0.4rem -2rem;
     }
 
     /* Mobile: duration bars are a desktop overlay; the stacked cards
@@ -1308,7 +1311,11 @@ footer .container {
         transform: none;
         align-self: auto;
         justify-content: flex-start;
-        margin: 0.75rem 0 0.25rem -1.5rem;
+        /* direct child of the ol: static position is the 2rem padding edge
+           (32px from the spine); -10px puts the label at a clear header
+           indent (~22px), right of the month column (~10px). Right margin
+           per user edit kept. */
+        margin: 0.75rem 2rem 0.25rem 1rem;
         border: none;
         background: none;
         padding: 0;
