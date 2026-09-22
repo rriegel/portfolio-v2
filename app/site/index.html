@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,14 +19,32 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body id="top">
     <header>
         <nav>
             <div class="container">
-                <h1 class="logo">Ryan Riegel</h1>
+                <div class="header-brand">
+                    <a href="#top" class="logo-link" aria-label="Ryan Riegel — back to top">
+                        <h1 class="logo">Ryan Riegel</h1>
+                    </a>
+                    <div class="social-links">
+                        <a href="https://github.com/rriegel" target="_blank" rel="noopener" aria-label="GitHub">
+                            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                        </a>
+                        <a href="https://linkedin.com/in/ryanjriegel" target="_blank" rel="noopener" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/></svg>
+                        </a>
+                    </div>
+                </div>
                 <ul class="nav-links">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#timeline">Timeline</a></li>
+                    <li class="has-dropdown">
+                        <a href="#about" aria-expanded="false" aria-haspopup="true">About</a>
+                        <ul class="dropdown">
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#skills">Core Expertise</a></li>
+                            <li><a href="#timeline">Timeline</a></li>
+                        </ul>
+                    </li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -37,11 +55,22 @@
     <main>
         <section id="hero" class="section">
             <div class="container">
-                <h2>Software Engineer</h2>
-                <p class="hero-subtitle">Building scalable systems and clean, maintainable code</p>
-                <div class="hero-links">
-                    <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h2>Software Engineer</h2>
+                        <p class="hero-subtitle">Building performant and scalable systems</p>
+                        <div class="hero-links">
+                            <a href="#projects" class="btn btn-primary">View Projects</a>
+                            <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                        </div>
+                    </div>
+                    <picture class="hero-photo">
+                        <source srcset="images/headshot-640.webp 640w, images/headshot-320.webp 320w"
+                                sizes="(max-width: 768px) 40vw, 320px"
+                                type="image/webp">
+                        <img src="images/headshot-640.jpg" alt="Headshot of Ryan Riegel"
+                             width="640" height="640" fetchpriority="high">
+                    </picture>
                 </div>
             </div>
         </section>
@@ -49,123 +78,182 @@
         <section id="about" class="section">
             <div class="container">
                 <h2>About</h2>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p>Full-stack software engineer with experience building web applications, cloud infrastructure, and developer tools. I focus on writing clean, testable code and building systems that scale.</p>
-                        <p>Currently working on infrastructure automation and cloud-native applications using AWS, Terraform, and modern web technologies.</p>
-                    </div>
-                    <div class="skills">
-                        <h3>Technical Skills</h3>
-                        <div class="skill-category">
-                            <h4>Languages</h4>
+                <div class="about-text">
+                    <p>I am a Full Stack Software Engineer at Finalsite, where I specialize in building high-availability systems at scale and driving complex product initiatives from conception to deployment. I thrive in environments that demand deep ownership and designing architecture for infrastructure advancement.</p>
+                    <p>I am committed to a culture of continuous improvement, both for my own craft and for my team. I regularly participate in mentorship, lead cross-team integrations, and maintain detailed documentation to elevate the entire engineering culture. Please feel free to reach out if you'd like to connect!</p>
+                </div>
+                <div id="skills"></div>
+                <hr class="subsection-divider">
+                <div class="skills">
+                    <h3>Core Expertise</h3>
+                    <div class="skill-grid">
+                        <div class="skill-card">
+                            <h4>Backend</h4>
                             <ul>
                                 <li>Ruby</li>
-                                <li>JavaScript/TypeScript</li>
-                                <li>Python</li>
-                                <li>Java</li>
-                            </ul>
-                        </div>
-                        <div class="skill-category">
-                            <h4>Frameworks</h4>
-                            <ul>
-                                <li>Rails</li>
-                                <li>React</li>
+                                <li>Ruby on Rails</li>
+                                <li>RSpec</li>
+                                <li>Java Spring</li>
                                 <li>Node.js</li>
-                                <li>Spring Boot</li>
                             </ul>
                         </div>
-                        <div class="skill-category">
-                            <h4>Infrastructure</h4>
+                        <div class="skill-card">
+                            <h4>Frontend</h4>
+                            <ul>
+                                <li>React</li>
+                                <li>Redux</li>
+                                <li>TypeScript</li>
+                                <li>Mocha</li>
+                            </ul>
+                        </div>
+                        <div class="skill-card">
+                            <h4>Cloud / Infra</h4>
                             <ul>
                                 <li>AWS</li>
-                                <li>Terraform</li>
                                 <li>Docker</li>
-                                <li>CI/CD</li>
+                                <li>Terraform</li>
+                                <li>Chef</li>
+                                <li>Jenkins</li>
+                                <li>Kubernetes</li>
+                            </ul>
+                        </div>
+                        <div class="skill-card">
+                            <h4>Databases</h4>
+                            <ul>
+                                <li>MySQL</li>
+                                <li>PostgreSQL</li>
+                                <li>MongoDB</li>
+                            </ul>
+                        </div>
+                        <div class="skill-card">
+                            <h4>Monitoring</h4>
+                            <ul>
+                                <li>Datadog</li>
+                                <li>New Relic</li>
+                                <li>Kibana</li>
+                                <li>Rollbar</li>
                             </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="timeline" class="section">
-            <div class="container">
-                <h2>Life &amp; Work Timeline</h2>
-                <p class="timeline-intro">A living timeline, not a resume. Filter it by what you're curious about.</p>
-                <div class="timeline-chips" role="group" aria-label="Filter timeline by category">
-                    <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
-                    <button type="button" class="chip" data-filter="work" aria-pressed="false">Professional</button>
-                    <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
-                    <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
-                </div>
+                <div id="timeline"></div>
+                <hr class="subsection-divider">
+                <div class="timeline">
+                    <h3>Timeline</h3>
+                    <div class="timeline-chips" role="group" aria-label="Filter timeline by category (multiple allowed)">
+                        <button type="button" class="chip" data-filter="work" aria-pressed="true">Professional</button>
+                        <button type="button" class="chip" data-filter="run" aria-pressed="false">Running</button>
+                        <button type="button" class="chip" data-filter="hobby" aria-pressed="false">Hobbies</button>
+                    </div>
+                    <p class="timeline-hint">Tap an event on the timeline to see details</p>
                 <div class="life-timeline-wrap">
-                    <span class="life-timeline-start" aria-hidden="true">2021</span>
                     <ol class="life-timeline">
-                    <li class="milestone" data-cat="run">
-                        <button type="button" class="milestone-node" aria-label="2025 — Running milestone (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2025</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone three]</h4>
-                            <p>[Placeholder — swap for a real milestone: race result, PR, or DNF with a story.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="hobby">
-                        <button type="button" class="milestone-node" aria-label="2025 — Q*bert (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2025</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Hobby</span> Q*bert</h4>
-                            <p>[Placeholder — swap for a real milestone: what shipped, what it taught you.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="work">
-                        <button type="button" class="milestone-node" aria-label="2024 — Software Engineer II at Finalsite (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2024</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Work</span> Software Engineer II — Finalsite</h4>
-                            <p>Full-stack development with Ruby on Rails, React, and AWS infrastructure. Building scalable education platforms serving thousands of schools.</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="hobby">
-                        <button type="button" class="milestone-node" aria-label="2024 — Hobby milestone (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2024</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Hobby</span> [Placeholder — Hobby milestone three]</h4>
-                            <p>[Placeholder — swap for a real milestone.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="run">
-                        <button type="button" class="milestone-node" aria-label="2023 — Running milestone (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2023</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone two]</h4>
-                            <p>[Placeholder — swap for a real milestone.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="hobby">
-                        <button type="button" class="milestone-node" aria-label="2023 — Hobby milestone (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2023</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Hobby</span> [Placeholder — Hobby milestone two]</h4>
-                            <p>[Placeholder — swap for a real milestone: music production, homelab, etc.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="run">
-                        <button type="button" class="milestone-node" aria-label="2022 — Running milestone (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2022</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Running</span> [Placeholder — Running milestone one]</h4>
-                            <p>[Placeholder — swap for a real milestone: first marathon, first race, etc.]</p>
-                        </div>
-                    </li>
-                    <li class="milestone" data-cat="work">
-                        <button type="button" class="milestone-node" aria-label="2021 — Software Engineer at Seisan Consulting (details)" aria-expanded="false"></button>
-                        <span class="milestone-date">2021</span>
-                        <div class="milestone-body" role="tooltip">
-                            <h4><span class="milestone-cat">Work</span> Software Engineer — Seisan Consulting</h4>
-                            <p>Built web applications for clients across a range of industries, covering API design, frontend development, and database optimization. Implemented CI/CD pipelines and improved deployment workflows.</p>
-                        </div>
-                    </li>
-                </ol>
+                      <li class="milestone" data-date="2019-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2019 — Pittsburgh Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2019 Pittsburgh Half Marathon</h4>
+                              <p>I completed my first half marathon in Pittsburgh. It was an extremely rewarding experience that kickstarted my long distance running journey.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2019-11" data-end="2021-03" data-cat="work">
+                          <button type="button" class="milestone-node" aria-label="Nov 2019 — Research Technologist at Johns Hopkins University (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Work</span> Research Technologist @ Johns Hopkins University</h4>
+                              <p>Research Technologist in the Center for Hearing and Balance in the School of Medicine. Experienced in performing Auditory Brainstem Response (ABR) recording, Vestibular Evoked Potential (VsEP) recording, and other various auditory and vestibular function assessments.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2020-10" data-end="2025-05" data-cat="hobby">
+                          <button type="button" class="milestone-node" aria-label="Oct 2020 — Music Production (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Hobby</span> Music Production</h4>
+                              <p>I started making music in 2018, but by this time in 2020 I began to take it more seriously. I was releasing music on a regular schedule, challenging myself to learn more about music theory, sound design, and other concepts. I did slowly drop off from this hobby as it is very time consuming, but it's something I know I'll resume in the future.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2021-11" data-end="2024-12" data-cat="work">
+                          <button type="button" class="milestone-node" aria-label="Nov 2021 — Software Engineer at Seisan Consulting (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Work</span> Software Engineer @ Seisan Consulting</h4>
+                              <p>Served as an individual contributor for a diverse portfolio of enterprise and startup clients. Specialized in rapidly deploying high-quality code across various ecosystems, including the MERN stack, Java (Spring) and C#/.NET.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2022-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2022 — Pittsburgh Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2022 Pittsburgh Half Marathon</h4>
+                              <p>I trained for this race with a good friend of mine and set a personal best with a time of 1:45!</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2023-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2023 — Pittsburgh Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2023 Pittsburgh Half Marathon</h4>
+                              <p>At this point I felt like a veteran to the Pittsburgh Half, but it's always such a fun race.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2024-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2024 — Pittsburgh Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2024 Pittsburgh Marathon</h4>
+                              <p>I completed my first marathon in Pittsburgh. Prior to committing to this, I had always viewed the marathon distance as out of reach for myself. But through dedicated training with my friends, I was able to complete the race with a time of 3:45!</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2024-10" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="Oct 2024 - Ann Arbor Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2024 Ann Arbor Half Marathon</h4>
+                              <p>We visited Ann Arbor to check out apartments and run the half marathon. It was a great way to see the town I'd call home for a few years.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2024-12" data-end="present" data-cat="work">
+                          <button type="button" class="milestone-node" aria-label="Dec 2024 - Software Engineer II at Finalsite (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Work</span> Software Engineer II @ Finalsite</h4>
+                              <p>As a Software Engineer II at Finalsite, I focus on building high-availability architecture and driving the technical direction of mission-critical product lines. My work centers on balancing rapid feature delivery with the long-term scalability required to support thousands of educational institutions.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2025-09" data-end="present" data-cat="hobby">
+                          <button type="button" class="milestone-node" aria-label="Sep 2025 — Started Piano Lessons (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Hobby</span> Piano Lessons</h4>
+                              <p>I started learning piano and have been practicing regularly. Through music production I learned theory basics and have picked up a little piano along the way, but I realized I'd really enjoy focusing on playing.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2025-11" data-end="present" data-cat="hobby">
+                          <button type="button" class="milestone-node" aria-label="Nov 2025 — Self Hosting (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Hobby</span> Self Hosting</h4>
+                              <p>After researching and planning, I began my journey into self-hosting my personal services and applications. This has become an extremely rewarding project. I use its services every day and use it as a sandbox for experimenting with new technologies.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2026-05" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="May 2026 — Pittsburgh Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2026 Pittsburgh Marathon</h4>
+                              <p>Trained for the marathon with my partner and with the goal of beating my previous time. I achieved this goal and am excited to do it again soon.</p>
+                          </div>
+                      </li>
+                      <li class="milestone" data-date="2026-10" data-cat="run">
+                          <button type="button" class="milestone-node" aria-label="Oct 2026 - Ann Arbor Half Marathon (details)" aria-expanded="false"></button>
+                          <span class="milestone-date"></span>
+                          <div class="milestone-body" role="tooltip">
+                              <h4><span class="milestone-cat">Running</span> 2026 Ann Arbor Half Marathon</h4>
+                              <p>More details soon...</p>
+                          </div>
+                      </li>
+                    </ol>
+                </div>
                 </div>
             </div>
         </section>
@@ -173,7 +261,8 @@
         <section id="projects" class="section">
             <div class="container">
                 <h2>Projects</h2>
-                <div class="project-grid">
+                <div class="project-carousel">
+                    <div class="project-track">
                     <article class="project-card">
                         <h3>Self-Hosted Music MCP</h3>
                         <p class="project-description">A Model Context Protocol server that gives AI agents a real map of a personal music collection — local library (517 artists on a NAS), ListenBrainz listening history, and MusicBrainz metadata joined on permanent IDs. Answers "what do I own, what's duplicated, what am I missing" from any MCP client; a knowledge layer, not a playback controller.</p>
@@ -232,6 +321,12 @@
                             <a href="https://github.com/rriegel/qbert-game" class="project-link">GitHub</a>
                         </div>
                     </article>
+                    </div>
+                    <div class="project-controls">
+                        <button type="button" class="carousel-btn carousel-prev" aria-label="Previous project">&#8249;</button>
+                        <div class="carousel-dots" role="tablist" aria-label="Select project"></div>
+                        <button type="button" class="carousel-btn carousel-next" aria-label="Next project">&#8250;</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -239,7 +334,7 @@
         <section id="contact" class="section">
             <div class="container">
                 <h2>Contact</h2>
-                <p class="contact-intro">Interested in working together? Send me a message and I'll get back to you soon.</p>
+                <p class="contact-intro">Interested in working together? Send me a message and I'll get back to you soon</p>
                 <form id="contact-form">
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -262,44 +357,41 @@
         <section id="colophon" class="section">
             <div class="container">
                 <h2>This Site Was Built With</h2>
-                <p class="contact-intro">No frameworks, no build step — the portfolio itself is the demonstration. The source is on <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a>.</p>
+                
                 <div class="colophon-grid">
                     <div class="colophon-item">
                         <h4>HTML / CSS / JS</h4>
-                        <p>Hand-written, responsive, no framework.</p>
+                        <p>Simple and responsive</p>
                     </div>
                     <div class="colophon-item">
                         <h4>AWS Lambda</h4>
-                        <p>Serverless contact form backend.</p>
+                        <p>Serverless backend for the contact form</p>
                     </div>
                     <div class="colophon-item">
                         <h4>Terraform</h4>
-                        <p>Infrastructure as code, modular.</p>
+                        <p>Infrastructure as code</p>
                     </div>
                     <div class="colophon-item">
                         <h4>CloudFront + S3</h4>
-                        <p>Global CDN, HTTPS, cache rules.</p>
+                        <p>Global CDN, HTTPS, cache rules</p>
                     </div>
                     <div class="colophon-item">
                         <h4>GitHub Actions</h4>
-                        <p>Push-to-deploy CI/CD via OIDC.</p>
+                        <p>Automated deployment CI/CD</p>
                     </div>
                     <div class="colophon-item">
                         <h4>SES</h4>
-                        <p>Email delivery for the contact form.</p>
+                        <p>Email delivery for the contact form</p>
                     </div>
                 </div>
+                <p class="colophon-source">You can find the source on <a href="https://github.com/rriegel/portfolio-v2" class="project-link">GitHub</a></p>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Ryan Riegel. Built with AWS, Terraform, and GitHub Actions.</p>
-            <div class="social-links">
-                <a href="https://github.com/rriegel" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://linkedin.com/in/ryanjriegel" target="_blank" rel="noopener">LinkedIn</a>
-            </div>
+            <p>&copy; 2026 Ryan Riegel</p>
         </div>
     </footer>
 

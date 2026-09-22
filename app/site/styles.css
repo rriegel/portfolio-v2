@@ -11,6 +11,12 @@ body {
     background: #f8f9fa;
 }
 
+/* Smooth anchor navigation; keep targets clear of the sticky header. */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -30,8 +36,46 @@ header {
 
 nav .container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+/* Nav truly centered in the header: absolutely positioned at 50%,
+   unaffected by the right-pinned brand cluster's width. */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Brand cluster spans the header width: name hugs the left edge,
+   social icon row hugs the right. */
+.header-brand {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Social links now live in the dark header */
+.header-brand .social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.header-brand .social-links a {
+    color: rgba(255, 255, 255, 0.75);
+    display: inline-flex;
+    transition: color 0.2s;
+}
+
+.header-brand .social-links a:hover {
+    color: #00d9ff;
 }
 
 .logo {
@@ -40,10 +84,23 @@ nav .container {
     color: #00d9ff;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
+/* The name navigates to the top of the site; keep the visual identical to
+   the old plain h1 (no underline, no link chrome). */
+.logo-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+    opacity: 0.85;
+}
+
+.logo-link:focus-visible {
+    outline: 2px solid #00d9ff;
+    outline-offset: 3px;
 }
 
 .nav-links a {
@@ -57,9 +114,106 @@ nav .container {
     color: #00d9ff;
 }
 
+/* About dropdown: hidden by default; opens on hover (desktop) or via
+   .is-open class (touch/keyboard, toggled in timeline.js) */
+.has-dropdown {
+    position: relative;
+}
+
+.dropdown {
+    list-style: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 0.5rem 0;
+    background: #16213e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    min-width: 11rem;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    z-index: 50;
+}
+
+.dropdown li {
+    width: 100%;
+}
+
+.dropdown a {
+    display: block;
+    padding: 0.5rem 1.25rem;
+    white-space: nowrap;
+}
+
+.dropdown a:hover {
+    background: rgba(0, 217, 255, 0.1);
+}
+
+.has-dropdown:hover .dropdown,
+.has-dropdown.is-open .dropdown {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Sections */
 .section {
     padding: 5rem 0;
+}
+
+/* ---- Content pop-in: sections fade/slide in as they enter the viewport.
+   .reveal starts hidden + offset; .reveal.is-visible settles in. JS adds
+   both via IntersectionObserver; without JS (or with reduced motion) the
+   fallback rules below keep everything visible. ---- */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Hero entrance on load (no observer needed - it's above the fold). */
+.hero-content {
+    animation: hero-in 0.7s ease-out both;
+}
+
+@keyframes hero-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Respect users who prefer less motion: reveal instantly, no entrance. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .hero-content {
+        animation: none;
+    }
+}
+
+/* No-JS fallback: script.js removes this class when the observer is wired;
+   without JS the content never hides. */
+.no-js .reveal {
+    opacity: 1;
+    transform: none;
 }
 
 .section:nth-child(even) {
@@ -89,8 +243,18 @@ h2::after {
 #hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: white;
-    text-align: center;
-    padding: 8rem 0;
+    padding: 7rem 0;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+}
+
+.hero-text {
+    flex: 1;
 }
 
 #hero h2 {
@@ -99,21 +263,30 @@ h2::after {
     margin-bottom: 1rem;
 }
 
-#hero h2::after {
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .hero-subtitle {
     font-size: 1.25rem;
     color: #b0b0b0;
     margin-bottom: 2rem;
 }
 
+.hero-photo {
+    flex-shrink: 0;
+}
+
+.hero-photo img {
+    display: block;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(0, 217, 255, 0.35);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
 .hero-links {
     display: flex;
     gap: 1rem;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
@@ -152,17 +325,14 @@ h2::after {
 }
 
 /* About Section */
-.about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 3rem;
-}
-
 .about-text p {
     margin-bottom: 1rem;
     font-size: 1.1rem;
     line-height: 1.8;
+}
+
+.skills {
+  margin-bottom: 1.5rem;
 }
 
 .skills h3 {
@@ -171,45 +341,85 @@ h2::after {
     color: #1a1a2e;
 }
 
-.skill-category {
+.subsection-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 3rem 0;
+}
+
+.timeline h3 {
+    font-size: 1.5rem;
     margin-bottom: 1.5rem;
+    color: #1a1a2e;
 }
 
-.skill-category h4 {
-    font-size: 1rem;
-    color: #00d9ff;
-    margin-bottom: 0.5rem;
+.skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.skill-card {
+    background: white;
+    padding: 1.25rem 1.25rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.skill-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    border-color: #00d9ff;
+}
+
+.skill-card h4 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #00b8d9;
+    margin-bottom: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
 }
 
-.skill-category ul {
+.skill-card ul {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
-.skill-category li {
-    background: #e8f4f8;
+.skill-card li {
+    background: #eef7fa;
     color: #1a1a2e;
-    padding: 0.375rem 0.875rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-/* Life & Work Timeline */
-.timeline-intro {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 1.5rem;
+.skill-card li:hover {
+    background: #00d9ff;
+    color: #1a1a2e;
 }
 
+/* Timeline */
 .timeline-chips {
     display: flex;
     gap: 0.75rem;
     flex-wrap: wrap;
     margin-bottom: 2.5rem;
+}
+
+/* Touch affordance hint - mobile only (hover is disabled there, so the
+   tap-to-open interaction is not discoverable without a note). */
+.timeline-hint {
+    display: none;
+    margin: 0 0 1.25rem;
+    font-size: 0.85rem;
+    color: #666;
 }
 
 .chip {
@@ -225,34 +435,49 @@ h2::after {
     transition: all 0.2s;
 }
 
-.chip:hover {
+/* Chip colors match their node colors on the timeline */
+.chip[data-filter="work"] {
     border-color: #00d9ff;
-    color: #00b8d9;
 }
 
-.chip[aria-pressed="true"] {
+.chip[data-filter="run"] {
+    border-color: #2ecc71;
+}
+
+.chip[data-filter="hobby"] {
+    border-color: #f39c12;
+}
+
+.chip[data-filter="work"]:hover { color: #00b8d9; }
+.chip[data-filter="run"]:hover { color: #27ae60; }
+.chip[data-filter="hobby"]:hover { color: #e67e22; }
+
+/* Selected: filled with the node color */
+.chip[aria-pressed="true"][data-filter="work"] {
     background: #00d9ff;
     border-color: #00d9ff;
+    color: #1a1a2e;
+}
+
+.chip[aria-pressed="true"][data-filter="run"] {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: white;
+}
+
+.chip[aria-pressed="true"][data-filter="hobby"] {
+    background: #f39c12;
+    border-color: #f39c12;
     color: #1a1a2e;
 }
 
 .life-timeline {
     list-style: none;
     position: relative;
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: stretch;
-    padding: 5.5rem 1rem 5.5rem 1rem;
+    display: block;
+    height: var(--tl-half, 5.5rem);
     margin: 0 auto;
     max-width: 1100px;
-}
-
-/* Half the vertical padding is the popover room; the spine sits at the
-   boundary between the two halves. Expose it as a custom property so
-   .milestone can share the exact same geometry. */
-.life-timeline {
-    --tl-half: 5.5rem; /* must equal the padding block above/below */
 }
 
 /* Horizontal spine: runs left (oldest) to right (newest), with directional detail:
@@ -299,14 +524,21 @@ h2::after {
    (padding excluded via content-box behavior of flex items), so its
    50% line lands exactly on the spine row. */
 .milestone {
-    position: relative;
+    position: absolute;
+    left: var(--x, 0%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1 1 0;
     min-width: 0;
     padding: 0 0.25rem;
     transition: opacity 0.3s, filter 0.3s;
+    /* the li's transform creates a stacking context, so any z-index on
+       children (dates, popover) is scoped INSIDE it; the li itself must
+       carry the elevation. Base 25 = above year markers (z 20), so month
+       text is never layered under them; open/hover raises to 30. */
+    z-index: 25;
 }
 
 /* The node button centered on the li's vertical center (= the spine).
@@ -347,8 +579,13 @@ h2::after {
     outline-offset: 3px;
 }
 
-/* Dates: alternate above/below the spine by nth-child parity */
+/* Dates: default above the spine; .side-up (a JS-assigned class, not
+   nth-child, so JS-inserted year markers can't shift sides) moves it below. */
 .milestone-date {
+    position: absolute;
+    bottom: calc(50% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
     font-weight: 700;
     font-size: 0.95rem;
     color: #666;
@@ -362,7 +599,7 @@ h2::after {
     position: absolute;
     left: 50%;
     top: calc(50% + var(--pop-gap, 18px));
-    width: 240px;
+    width: min(340px, calc(100vw - 3rem));
     background: white;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -376,8 +613,8 @@ h2::after {
     transform: translateX(calc(-50% + var(--pop-shift, 0px)));
 }
 
-/* Even milestones open upward */
-.milestone:nth-child(even) .milestone-body {
+/* .side-up milestones open upward */
+.milestone.side-up .milestone-body {
     top: auto;
     bottom: calc(50% + var(--pop-gap, 18px));
 }
@@ -389,11 +626,21 @@ h2::after {
     visibility: visible;
 }
 
+/* An open (or hovered) popover's li must paint above EVERY other timeline
+   element - nodes, dates, bars, and year labels (z-index 20): the li's own
+   transform creates a stacking context, so the body's z-index only counts
+   inside that context. The li itself carries the elevation. */
+.milestone:hover,
+.milestone.is-open {
+    z-index: 30;
+}
+
 /* Caret: centered on the popover's node-facing edge, shifted identically
    so it keeps pointing at the node even when the box is clamped. */
 .milestone-body::before {
     content: '';
     position: absolute;
+    top: -7px; /* default: popover opens below the spine */
     left: calc(50% - var(--pop-shift, 0px));
     width: 12px;
     height: 12px;
@@ -403,11 +650,7 @@ h2::after {
     transform: translateX(-50%) rotate(45deg);
 }
 
-.milestone:nth-child(odd) .milestone-body::before {
-    top: -7px;
-}
-
-.milestone:nth-child(even) .milestone-body::before {
+.milestone.side-up .milestone-body::before {
     top: auto;
     bottom: -7px;
     border-left: none;
@@ -416,21 +659,112 @@ h2::after {
     border-bottom: 1px solid #e0e0e0;
 }
 
-/* Dates hug the spine on the opposite side from the popover */
-.milestone:nth-child(odd) .milestone-date {
-    position: absolute;
-    bottom: calc(50% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
+/* Dates hug the spine on the opposite side from the popover; the JS fills
+   in the month (data-date="YYYY-MM"). .side-up flips the date below the
+   spine (the base rule above places it above). Elevation vs year markers
+   is carried by the .milestone li itself (see below). */
+.milestone.side-up .milestone-date {
+    bottom: auto;
+    top: calc(50% + 6px);
 }
 
-.milestone:nth-child(even) .milestone-date {
+/* Year group markers: plain text floating above the spine, positioned by
+   JS at their month offset (left set inline). */
+.year-marker {
     position: absolute;
-    top: calc(50% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
+    left: var(--x, 0%);
+    top: 50%;
+    transform: translate(-50%, calc(-50% - 3.4rem));
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #999;
+    background: none;
+    padding: 0;
+    border: none;
     white-space: nowrap;
+    line-height: 1;
+    /* above sibling nodes/bars while idle; an open popover's li (z-index
+       30) covers the markers too */
+    z-index: 20;
+}
+
+/* Ticks on the spine at each year boundary */
+.year-marker::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 0.45rem);
+    transform: translateX(-50%);
+    width: 2px;
+    height: 0.9rem;
+    background: #ccc;
+}
+
+/* Duration bars: hidden by default. When an event's details open, its bar
+   appears directly ON the main timeline as a thicker highlighted line
+   (6px, category color, rounded caps, no text). JS positions each bar by
+   month offsets and toggles .is-visible with the popover. Open-ended
+   items get an arrowhead at the axis end. */
+.timeline-bars {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 0;
+}
+
+.timeline-bar {
+    position: absolute;
+    top: 0;
+    height: 6px;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.timeline-bar.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.timeline-bar-work { background: #00d9ff; }
+.timeline-bar-run { background: #2ecc71; }
+.timeline-bar-hobby { background: #f39c12; }
+
+/* Ongoing: open arrowhead at the right edge */
+.timeline-bar-open {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.timeline-bar-open::after {
+    content: '';
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 8px solid;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+
+.timeline-bar-open.timeline-bar-hobby::after { border-left-color: #f39c12; }
+.timeline-bar-open.timeline-bar-work::after { border-left-color: #00d9ff; }
+.timeline-bar-open.timeline-bar-run::after { border-left-color: #2ecc71; }
+
+/* Popover date stamp */
+.milestone-stamp {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #00b8d9;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
 }
 
 .milestone-body h4 {
@@ -474,17 +808,35 @@ h2::after {
     margin: 0;
 }
 
-/* Ghost overlay: non-matching milestones dim but stay in place */
+/* Ghost overlay: non-matching milestones dim but stay in place, and can't
+   be interacted with — no hover popover, no tap-to-open while filtered out. */
 .milestone[data-dim] {
     opacity: 0.35;
     filter: saturate(0.4);
 }
 
+.milestone[data-dim] .milestone-node {
+    pointer-events: none;
+}
+
+.milestone[data-dim] .milestone-body {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
 /* Projects Section */
-.project-grid {
+/* Projects carousel: one card in focus at a time */
+.project-carousel {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+/* All cards stack in the same grid cell; the active one is visible.
+   No overflow mask: inactive cards are fully hidden (opacity 0 +
+   visibility hidden), and a mask would clip the active card's hover
+   lift and top border. */
+.project-track {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
 }
 
 .project-card {
@@ -494,12 +846,75 @@ h2::after {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: all 0.3s;
     border: 1px solid #e0e0e0;
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(24px);
+    pointer-events: none;
+}
+
+.project-card.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
 }
 
 .project-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     border-color: #00d9ff;
+}
+
+.project-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.carousel-btn {
+    font-family: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    border-color: #00d9ff;
+    color: #00b8d9;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.carousel-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: #d5d5d5;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.carousel-dot.is-active {
+    background: #00d9ff;
+    transform: scale(1.2);
 }
 
 .project-card h3 {
@@ -561,7 +976,7 @@ h2::after {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     max-width: 900px;
-    margin: 0 auto;
+    margin: 0 auto 2.5rem;
 }
 
 .colophon-item {
@@ -580,6 +995,14 @@ h2::after {
     color: #555;
     font-size: 0.95rem;
     line-height: 1.5;
+}
+
+/* Source link below the grid: tighter than a section intro, no trailing gap */
+.colophon-source {
+    text-align: center;
+    color: #555;
+    font-size: 1rem;
+    margin: 0;
 }
 
 form {
@@ -667,41 +1090,97 @@ button:disabled {
 footer {
     background: #1a1a2e;
     color: white;
-    padding: 3rem 0;
+    padding: 2rem 0;
     text-align: center;
 }
 
 footer .container {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.social-links {
-    display: flex;
-    gap: 1.5rem;
     justify-content: center;
-}
-
-.social-links a {
-    color: #00d9ff;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
-}
-
-.social-links a:hover {
-    color: #00b8d9;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .nav-links {
-        gap: 1rem;
+    html {
+        scroll-padding-top: 6.5rem;
     }
 
-    #hero {
-        padding: 4rem 0;
+    nav .container {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    /* DOM has the brand row first, so the natural column order is already
+       row 1: name left + social icons right (desktop rules carry over),
+       row 2: nav links. */
+    /* Keep the sticky header compact: nav links in one wrap row, not a
+       tall column that eats a third of the viewport. */
+    .nav-links {
+        position: static;
+        transform: none;
+        gap: 0.35rem 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        font-size: 0.92rem;
+    }
+
+    /* Hero stacks vertically: text first, then headshot */
+    .hero-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-links {
+        justify-content: center;
+    }
+
+    /* h2 text is centered on mobile; re-center its underline too */
+    #hero h2::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .hero-photo img {
+        width: 220px;
+        height: 220px;
+    }
+
+    /* Mobile: dropdown opens via .is-open tap. It renders as a floating
+       panel OVER the page (position:absolute, out of flow) so opening it
+       neither pushes content down nor stretches the sticky header. */
+    .has-dropdown {
+        position: relative;
+    }
+
+    .dropdown {
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 11rem;
+        text-align: center;
+        padding: 0.5rem 0;
+        background: #16213e;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        display: none;
+    }
+
+    .has-dropdown:hover .dropdown {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .has-dropdown.is-open .dropdown {
+        opacity: 1;
+        visibility: visible;
+        display: flex;
     }
 
     #hero h2 {
@@ -712,17 +1191,23 @@ footer .container {
         font-size: 1rem;
     }
 
-    .about-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
     h2 {
         font-size: 2rem;
     }
 
-    .project-grid {
-        grid-template-columns: 1fr;
+    .project-carousel {
+        max-width: 100%;
+    }
+
+    /* Inactive cards park at translateX(24px); their transformed border
+       boxes extend past the viewport and create horizontal scroll. A clip
+       is safe here (mobile has no hover lift to preserve). */
+    .project-track {
+        overflow: hidden;
+    }
+
+    .project-card {
+        padding: 1.5rem;
     }
 
     .colophon-grid {
@@ -743,6 +1228,9 @@ footer .container {
         display: block;
         padding: 0 0 0 2rem;
         position: relative;
+        /* cancel the desktop proportional-axis height (5.5rem): the stacked
+           cards need the ol to grow with its content */
+        height: auto;
     }
 
     .life-timeline::before {
@@ -763,9 +1251,21 @@ footer .container {
         display: none;
     }
 
+    /* chips + hint form one control cluster above the timeline */
+    .timeline-chips {
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-hint {
+        display: block;
+    }
+
     .milestone {
         display: block;
         position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
         padding: 0 0 2rem 1.5rem;
         min-height: 0;
     }
@@ -784,11 +1284,49 @@ footer .container {
         transform: scale(1.2);
     }
 
-    .milestone-date {
+    /* must beat the desktop .milestone.side-up .milestone-date rule (0-3-0):
+       same specificity here, later source order wins */
+    .milestone.side-up .milestone-date,
+    .milestone.side-down .milestone-date {
         display: inline-block;
         position: static;
         transform: none;
-        margin-bottom: 0.4rem;
+        white-space: normal;
+        /* static position lands at ol 2rem + li 1.5rem padding (56px from
+           the spine); pull the label back to ~10px so it sits just right
+           of the 14px node dots */
+        margin: 0 0 0.4rem -2rem;
+    }
+
+    /* Mobile: duration bars are a desktop overlay; the stacked cards
+       carry duration info via their own layout. */
+    .timeline-bars {
+        display: none;
+    }
+
+    /* Mobile: year markers become inline separators between year groups */
+    .year-marker {
+        position: static;
+        left: auto;
+        transform: none;
+        align-self: auto;
+        justify-content: flex-start;
+        /* direct child of the ol: static position is the 2rem padding edge
+           (32px from the spine); -10px puts the label at a clear header
+           indent (~22px), right of the month column (~10px). Right margin
+           per user edit kept. */
+        margin: 0.75rem 2rem 0.25rem 1rem;
+        border: none;
+        background: none;
+        padding: 0;
+        color: #00b8d9;
+    }
+
+    /* the desktop spine tick must not follow the marker onto mobile: with the
+       marker static, its containing block is the ol, so the tick would hang
+       below the last card and inflate the container's scroll height */
+    .year-marker::after {
+        display: none;
     }
 
     .milestone-body {
@@ -811,8 +1349,20 @@ footer .container {
     }
 
     .milestone.is-open .milestone-body {
+        display: block;
         opacity: 1;
         visibility: visible;
+        /* Out-of-flow so opening a card never shifts the timeline: the ol
+           keeps its height and the card overlays the content below it,
+           painting above via the open li's z-index (30). Anchored just
+           right of the spine (li padding box is 2rem from the ol edge). */
+        position: absolute;
+        top: calc(50% + 18px);
+        bottom: auto;
+        left: -1.75rem;
+        transform: none;
+        width: min(340px, calc(100vw - 4rem));
+        z-index: 30;
     }
 
     .milestone-body h4 {
