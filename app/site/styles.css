@@ -514,6 +514,15 @@ h2::after {
     visibility: visible;
 }
 
+/* An open (or hovered) popover's li must paint above every other milestone
+   li, its bar, and sibling popovers: the li's own transform creates a
+   stacking context, so the body's z-index only counts inside that context.
+   Year markers (z-index 20) stay above even this. */
+.milestone:hover,
+.milestone.is-open {
+    z-index: 10;
+}
+
 /* Caret: centered on the popover's node-facing edge, shifted identically
    so it keeps pointing at the node even when the box is clamped. */
 .milestone-body::before {
@@ -574,7 +583,9 @@ h2::after {
     border: none;
     white-space: nowrap;
     line-height: 1;
-    z-index: 1;
+    /* above popovers: an open popover's li (z-index 10) must slide UNDER
+       the year labels */
+    z-index: 20;
 }
 
 /* Ticks on the spine at each year boundary */
