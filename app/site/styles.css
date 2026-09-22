@@ -570,9 +570,13 @@ h2::after {
     outline-offset: 3px;
 }
 
-/* Dates: alternate above/below the spine by nth-child parity */
+/* Dates: default above the spine; .side-up (a JS-assigned class, not
+   nth-child, so JS-inserted year markers can't shift sides) moves it below. */
 .milestone-date {
     position: absolute;
+    bottom: calc(50% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
     font-weight: 700;
     font-size: 0.95rem;
     color: #666;
@@ -600,8 +604,8 @@ h2::after {
     transform: translateX(calc(-50% + var(--pop-shift, 0px)));
 }
 
-/* Even milestones open upward */
-.milestone:nth-child(even) .milestone-body {
+/* .side-up milestones open upward */
+.milestone.side-up .milestone-body {
     top: auto;
     bottom: calc(50% + var(--pop-gap, 18px));
 }
@@ -627,6 +631,7 @@ h2::after {
 .milestone-body::before {
     content: '';
     position: absolute;
+    top: -7px; /* default: popover opens below the spine */
     left: calc(50% - var(--pop-shift, 0px));
     width: 12px;
     height: 12px;
@@ -636,11 +641,7 @@ h2::after {
     transform: translateX(-50%) rotate(45deg);
 }
 
-.milestone:nth-child(odd) .milestone-body::before {
-    top: -7px;
-}
-
-.milestone:nth-child(even) .milestone-body::before {
+.milestone.side-up .milestone-body::before {
     top: auto;
     bottom: -7px;
     border-left: none;
@@ -650,22 +651,12 @@ h2::after {
 }
 
 /* Dates hug the spine on the opposite side from the popover; the JS fills
-   in the month (data-date="YYYY-MM"). Elevation vs year markers is carried
-   by the .milestone li itself (see below). */
-.milestone:nth-child(odd) .milestone-date {
-    position: absolute;
-    bottom: calc(50% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-
-.milestone:nth-child(even) .milestone-date {
-    position: absolute;
+   in the month (data-date="YYYY-MM"). .side-up flips the date below the
+   spine (the base rule above places it above). Elevation vs year markers
+   is carried by the .milestone li itself (see below). */
+.milestone.side-up .milestone-date {
+    bottom: auto;
     top: calc(50% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
 }
 
 /* Year group markers: plain text floating above the spine, positioned by
@@ -1228,6 +1219,9 @@ footer .container {
         display: block;
         padding: 0 0 0 2rem;
         position: relative;
+        /* cancel the desktop proportional-axis height (5.5rem): the stacked
+           cards need the ol to grow with its content */
+        height: auto;
     }
 
     .life-timeline::before {
@@ -1272,10 +1266,14 @@ footer .container {
         transform: scale(1.2);
     }
 
-    .milestone-date {
+    /* must beat the desktop .milestone.side-up .milestone-date rule (0-3-0):
+       same specificity here, later source order wins */
+    .milestone.side-up .milestone-date,
+    .milestone.side-down .milestone-date {
         display: inline-block;
         position: static;
         transform: none;
+        white-space: normal;
         margin-bottom: 0.4rem;
     }
 
@@ -1297,6 +1295,13 @@ footer .container {
         background: none;
         padding: 0;
         color: #00b8d9;
+    }
+
+    /* the desktop spine tick must not follow the marker onto mobile: with the
+       marker static, its containing block is the ol, so the tick would hang
+       below the last card and inflate the container's scroll height */
+    .year-marker::after {
+        display: none;
     }
 
     .milestone-body {

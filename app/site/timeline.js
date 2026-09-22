@@ -16,8 +16,8 @@
     /* ---------- month labels + year group markers ---------- */
     // Each milestone carries data-date="YYYY-MM", oldest first in the DOM
     // (the axis renders left->right, so 2021 sits at the left edge). The date
-    // span at each node shows the month only; a year marker is inserted after
-    // each year's last event. Popover titles gain a "Month Year" stamp.
+    // span at each node shows the month only; a year marker is inserted
+    // before each year's first event. Popover titles gain a "Month Year" stamp.
     var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -54,6 +54,15 @@
             stamp.textContent = text;
             h4.parentNode.insertBefore(stamp, h4);
         }
+    });
+
+    /* ---------- popover/date side (JS-owned, not nth-child) ---------- */
+    // Sides alternate by index among .milestone items. A class (rather than
+    // :nth-child) keeps sides stable when year markers are inserted INSIDE
+    // the <ol> — nth-child parity would shift every sibling after an
+    // insertion point.
+    milestones.forEach(function (m, i) {
+        m.classList.add(i % 2 === 1 ? 'side-up' : 'side-down');
     });
 
     /* ---------- time-proportional axis + duration bars ---------- */
@@ -103,6 +112,7 @@
         // 2. year labels at Jan of each year in span (plain text, above axis)
         var firstYear = Math.floor(axisStart / 12);
         var lastYear = Math.floor(axisEnd / 12);
+        var mi = 0;
         for (var y = firstYear; y <= lastYear; y++) {
             var boundary = y * 12; // Jan of y
             if (boundary < axisStart || boundary > axisEnd) continue;
@@ -111,7 +121,17 @@
             marker.setAttribute('aria-hidden', 'true');
             marker.textContent = String(y);
             marker.style.setProperty('--x', pct(boundary).toFixed(2) + '%');
-            ol.appendChild(marker);
+            // Insert before the year's first milestone: desktop positions
+            // markers absolutely via --x (DOM order irrelevant), while the
+            // mobile fallback renders them as inline separators, which must
+            // sit BETWEEN year groups rather than piled after the last card.
+            while (mi < milestones.length &&
+                   parseInt(dateOf(milestones[mi]).y, 10) < y) mi++;
+            if (mi < milestones.length) {
+                ol.insertBefore(marker, milestones[mi]);
+            } else {
+                ol.appendChild(marker);
+            }
         }
 
         // 3. duration bars: hidden until the event's details open; then the
