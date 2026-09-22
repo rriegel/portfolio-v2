@@ -11,6 +11,12 @@ body {
     background: #f8f9fa;
 }
 
+/* Smooth anchor navigation; keep targets clear of the sticky header. */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -78,6 +84,25 @@ nav .container {
     color: #00d9ff;
 }
 
+/* The name navigates to the top of the site; keep the visual identical to
+   the old plain h1 (no underline, no link chrome). */
+.logo-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+    opacity: 0.85;
+}
+
+.logo-link:focus-visible {
+    outline: 2px solid #00d9ff;
+    outline-offset: 3px;
+}
+
 .nav-links a {
     color: white;
     text-decoration: none;
@@ -141,6 +166,56 @@ nav .container {
     padding: 5rem 0;
 }
 
+/* ---- Content pop-in: sections fade/slide in as they enter the viewport.
+   .reveal starts hidden + offset; .reveal.is-visible settles in. JS adds
+   both via IntersectionObserver; without JS (or with reduced motion) the
+   fallback rules below keep everything visible. ---- */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Hero entrance on load (no observer needed - it's above the fold). */
+.hero-content {
+    animation: hero-in 0.7s ease-out both;
+}
+
+@keyframes hero-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Respect users who prefer less motion: reveal instantly, no entrance. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .hero-content {
+        animation: none;
+    }
+}
+
+/* No-JS fallback: script.js removes this class when the observer is wired;
+   without JS the content never hides. */
+.no-js .reveal {
+    opacity: 1;
+    transform: none;
+}
+
 .section:nth-child(even) {
     background: white;
 }
@@ -168,8 +243,18 @@ h2::after {
 #hero {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: white;
-    text-align: center;
-    padding: 8rem 0;
+    padding: 7rem 0;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+}
+
+.hero-text {
+    flex: 1;
 }
 
 #hero h2 {
@@ -178,21 +263,30 @@ h2::after {
     margin-bottom: 1rem;
 }
 
-#hero h2::after {
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .hero-subtitle {
     font-size: 1.25rem;
     color: #b0b0b0;
     margin-bottom: 2rem;
 }
 
+.hero-photo {
+    flex-shrink: 0;
+}
+
+.hero-photo img {
+    display: block;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(0, 217, 255, 0.35);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
 .hero-links {
     display: flex;
     gap: 1rem;
-    justify-content: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
 }
 
@@ -1007,17 +1101,51 @@ footer .container {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    nav .container {
-        flex-direction: column;
-        gap: 0.75rem;
+    html {
+        scroll-padding-top: 6.5rem;
     }
 
+    nav .container {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    /* Keep the sticky header compact: nav links in one wrap row, not a
+       tall column that eats a third of the viewport. */
     .nav-links {
         position: static;
         transform: none;
-        gap: 1rem;
+        gap: 0.35rem 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-links a {
+        font-size: 0.92rem;
+    }
+
+    /* Hero stacks vertically: text first, then headshot */
+    .hero-content {
         flex-direction: column;
         align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-links {
+        justify-content: center;
+    }
+
+    /* h2 text is centered on mobile; re-center its underline too */
+    #hero h2::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .hero-photo img {
+        width: 220px;
+        height: 220px;
     }
 
     /* Mobile: dropdown opens via .is-open tap, renders in-flow */
@@ -1071,6 +1199,13 @@ footer .container {
 
     .project-carousel {
         max-width: 100%;
+    }
+
+    /* Inactive cards park at translateX(24px); their transformed border
+       boxes extend past the viewport and create horizontal scroll. A clip
+       is safe here (mobile has no hover lift to preserve). */
+    .project-track {
+        overflow: hidden;
     }
 
     .project-card {
