@@ -1110,6 +1110,9 @@ footer .container {
         gap: 0.4rem;
     }
 
+    /* DOM has the brand row first, so the natural column order is already
+       row 1: name left + social icons right (desktop rules carry over),
+       row 2: nav links. */
     /* Keep the sticky header compact: nav links in one wrap row, not a
        tall column that eats a third of the viewport. */
     .nav-links {
@@ -1148,20 +1151,25 @@ footer .container {
         height: 220px;
     }
 
-    /* Mobile: dropdown opens via .is-open tap, renders in-flow */
+    /* Mobile: dropdown opens via .is-open tap. It renders as a floating
+       panel OVER the page (position:absolute, out of flow) so opening it
+       neither pushes content down nor stretches the sticky header. */
     .has-dropdown {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        position: relative;
     }
 
     .dropdown {
-        position: static;
-        transform: none;
-        display: none;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 11rem;
         text-align: center;
-        box-shadow: none;
-        padding: 0.25rem 0;
+        padding: 0.5rem 0;
+        background: #16213e;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        display: none;
     }
 
     .has-dropdown:hover .dropdown {
@@ -1173,16 +1181,6 @@ footer .container {
         opacity: 1;
         visibility: visible;
         display: flex;
-    }
-
-    .header-brand {
-        align-items: center;
-        flex-direction: row-reverse;
-        gap: 1rem;
-    }
-
-    #hero {
-        padding: 4rem 0;
     }
 
     #hero h2 {

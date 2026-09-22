@@ -296,6 +296,10 @@
     var dropdownLi = document.querySelector('.nav-links .has-dropdown');
     if (dropdownLi) {
         var aboutLink = dropdownLi.querySelector(':scope > a');
+        var closeAbout = function () {
+            dropdownLi.classList.remove('is-open');
+            aboutLink.setAttribute('aria-expanded', 'false');
+        };
         aboutLink.addEventListener('click', function (e) {
             // First tap opens the menu; second tap follows the #about link.
             if (!dropdownLi.classList.contains('is-open')) {
@@ -305,18 +309,21 @@
             }
         });
 
+        // Overlay menu: picking an item navigates and must dismiss the panel.
+        dropdownLi.querySelectorAll('.dropdown a').forEach(function (a) {
+            a.addEventListener('click', closeAbout);
+        });
+
         dropdownLi.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && dropdownLi.classList.contains('is-open')) {
-                dropdownLi.classList.remove('is-open');
-                aboutLink.setAttribute('aria-expanded', 'false');
+                closeAbout();
                 aboutLink.focus();
             }
         });
 
         document.addEventListener('click', function (e) {
             if (dropdownLi.classList.contains('is-open') && !dropdownLi.contains(e.target)) {
-                dropdownLi.classList.remove('is-open');
-                aboutLink.setAttribute('aria-expanded', 'false');
+                closeAbout();
             }
         });
     }
@@ -398,6 +405,10 @@
             projectsAnchor.setAttribute('aria-expanded', 'false');
 
             // Touch/keyboard: same first-tap-opens pattern as About
+            var closeProjects = function () {
+                projectsLi.classList.remove('is-open');
+                projectsAnchor.setAttribute('aria-expanded', 'false');
+            };
             projectsAnchor.addEventListener('click', function (e) {
                 if (!projectsLi.classList.contains('is-open')) {
                     e.preventDefault();
@@ -405,17 +416,21 @@
                     projectsAnchor.setAttribute('aria-expanded', 'true');
                 }
             });
+
+            // Overlay menu: picking an item navigates and must dismiss the panel.
+            dd.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', closeProjects);
+            });
+
             projectsLi.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && projectsLi.classList.contains('is-open')) {
-                    projectsLi.classList.remove('is-open');
-                    projectsAnchor.setAttribute('aria-expanded', 'false');
+                    closeProjects();
                     projectsAnchor.focus();
                 }
             });
             document.addEventListener('click', function (e) {
                 if (projectsLi.classList.contains('is-open') && !projectsLi.contains(e.target)) {
-                    projectsLi.classList.remove('is-open');
-                    projectsAnchor.setAttribute('aria-expanded', 'false');
+                    closeProjects();
                 }
             });
         }
