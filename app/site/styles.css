@@ -413,6 +413,15 @@ h2::after {
     margin-bottom: 2.5rem;
 }
 
+/* Touch affordance hint - mobile only (hover is disabled there, so the
+   tap-to-open interaction is not discoverable without a note). */
+.timeline-hint {
+    display: none;
+    margin: 0 0 1.25rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
 .chip {
     font-family: inherit;
     font-size: 0.95rem;
@@ -574,7 +583,7 @@ h2::after {
    nth-child, so JS-inserted year markers can't shift sides) moves it below. */
 .milestone-date {
     position: absolute;
-    bottom: calc(50% + 12px);
+    bottom: calc(50% + 6px);
     left: 50%;
     transform: translateX(-50%);
     font-weight: 700;
@@ -656,7 +665,7 @@ h2::after {
    is carried by the .milestone li itself (see below). */
 .milestone.side-up .milestone-date {
     bottom: auto;
-    top: calc(50% + 12px);
+    top: calc(50% + 6px);
 }
 
 /* Year group markers: plain text floating above the spine, positioned by
@@ -665,7 +674,7 @@ h2::after {
     position: absolute;
     left: var(--x, 0%);
     top: 50%;
-    transform: translate(-50%, calc(-50% - 2.6rem));
+    transform: translate(-50%, calc(-50% - 3.4rem));
     font-size: 1.1rem;
     font-weight: 700;
     color: #999;
@@ -687,7 +696,7 @@ h2::after {
     top: calc(100% + 0.45rem);
     transform: translateX(-50%);
     width: 2px;
-    height: 0.7rem;
+    height: 0.9rem;
     background: #ccc;
 }
 
@@ -1242,6 +1251,15 @@ footer .container {
         display: none;
     }
 
+    /* chips + hint form one control cluster above the timeline */
+    .timeline-chips {
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-hint {
+        display: block;
+    }
+
     .milestone {
         display: block;
         position: relative;
@@ -1327,6 +1345,17 @@ footer .container {
         display: block;
         opacity: 1;
         visibility: visible;
+        /* Out-of-flow so opening a card never shifts the timeline: the ol
+           keeps its height and the card overlays the content below it,
+           painting above via the open li's z-index (30). Anchored just
+           right of the spine (li padding box is 2rem from the ol edge). */
+        position: absolute;
+        top: calc(50% + 18px);
+        bottom: auto;
+        left: -1.75rem;
+        transform: none;
+        width: min(340px, calc(100vw - 4rem));
+        z-index: 30;
     }
 
     .milestone-body h4 {
