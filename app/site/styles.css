@@ -431,6 +431,11 @@ h2::after {
     min-width: 0;
     padding: 0 0.25rem;
     transition: opacity 0.3s, filter 0.3s;
+    /* the li's transform creates a stacking context, so any z-index on
+       children (dates, popover) is scoped INSIDE it; the li itself must
+       carry the elevation. Base 25 = above year markers (z 20), so month
+       text is never layered under them; open/hover raises to 30. */
+    z-index: 25;
 }
 
 /* The node button centered on the li's vertical center (= the spine).
@@ -551,7 +556,8 @@ h2::after {
 }
 
 /* Dates hug the spine on the opposite side from the popover; the JS fills
-   in the month (data-date="YYYY-MM"). */
+   in the month (data-date="YYYY-MM"). Elevation vs year markers is carried
+   by the .milestone li itself (see below). */
 .milestone:nth-child(odd) .milestone-date {
     position: absolute;
     bottom: calc(50% + 12px);
