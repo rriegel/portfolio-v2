@@ -703,8 +703,10 @@ h2::after {
 /* Duration bars: hidden by default. When an event's details open, its bar
    appears directly ON the main timeline as a thicker highlighted line
    (6px, category color, rounded caps, no text). JS positions each bar by
-   month offsets and toggles .is-visible with the popover. Open-ended
-   items get an arrowhead at the axis end. */
+   month offsets via --bar-x/--bar-w (custom properties so the mobile
+   fallback can re-axis the same elements onto the vertical spine) and
+   toggles .is-visible with the popover. Open-ended items get an arrowhead
+   at the axis end. */
 .timeline-bars {
     position: absolute;
     left: 0;
@@ -716,6 +718,8 @@ h2::after {
 .timeline-bar {
     position: absolute;
     top: 0;
+    left: var(--bar-x, 0%);
+    width: var(--bar-w, 0%);
     height: 6px;
     transform: translateY(-50%);
     border-radius: 3px;
@@ -1136,6 +1140,13 @@ footer .container {
         gap: 2rem;
     }
 
+    /* The desktop 7rem section padding leaves a huge dead band between the
+       sticky header and the headline on mobile; tighten just #hero (other
+       sections keep their rhythm). */
+    #hero {
+        padding: 3.5rem 0 4rem;
+    }
+
     .hero-links {
         justify-content: center;
     }
@@ -1298,11 +1309,56 @@ footer .container {
         margin: 0 0 0.4rem -2rem;
     }
 
-    /* Mobile: duration bars are a desktop overlay; the stacked cards
-       carry duration info via their own layout. */
+    /* Mobile: duration bars re-axis onto the vertical spine. The stacked
+       milestones are chronological (top = oldest), so a bar runs from its
+       event's node DOWN to its end month (interpolated between the
+       neighbouring nodes' dates by timeline.js via --bar-top/--bar-h).
+       Same on-demand behavior as desktop: hidden until the event's card
+       opens. 3px wide, hugging the spine just left of the open card. */
     .timeline-bars {
-        display: none;
+        display: block;
+        top: 0;
+        bottom: 0;
+        height: auto;
+        pointer-events: none;
+        /* bars paint over the open card (li z-index 30): the card overlays
+           the spine, and the bar must stay readable where they cross */
+        z-index: 35;
     }
+
+    .timeline-bar {
+        left: -2px; /* center the 6px bar on the 2px spine */
+        width: 6px; /* 3x the 2px spine: reads as a highlighted segment even
+                       when the category color matches the spine (work/cyan) */
+        top: var(--bar-top, 0px);
+        height: var(--bar-h, 0px);
+        transform: none;
+        border-radius: 3px;
+    }
+
+    /* the "ongoing" arrowhead points DOWN the vertical spine here */
+    .timeline-bar-open {
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .timeline-bar-open::after {
+        right: auto;
+        top: auto;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 8px solid;
+        border-bottom: none;
+    }
+
+    .timeline-bar-open.timeline-bar-hobby::after { border-top-color: #f39c12; }
+    .timeline-bar-open.timeline-bar-work::after { border-top-color: #00d9ff; }
+    .timeline-bar-open.timeline-bar-run::after { border-top-color: #2ecc71; }
 
     /* Mobile: year markers become inline separators between year groups */
     .year-marker {
