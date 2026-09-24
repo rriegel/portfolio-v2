@@ -11,7 +11,14 @@
     var milestones = document.querySelectorAll('.life-timeline .milestone');
     var ol = document.querySelector('.life-timeline');
     var bars = []; // duration bars, synced with popover visibility
+    var eventIndex = []; // events[] from the proportional layout, by milestone index
+    var tlAxisEnd = null; // axis end month index (present-ended events run to this)
     if (!chips.length || !milestones.length || !ol) return;
+
+    function monthIndexOf(ym) {
+        var v = (ym || '').split('-');
+        return (parseInt(v[0], 10) || 0) * 12 + (parseInt(v[1], 10) || 1) - 1;
+    }
 
     /* ---------- month labels + year group markers ---------- */
     // Each milestone carries data-date="YYYY-MM", oldest first in the DOM
@@ -96,6 +103,8 @@
             axisEnd = Math.max(axisEnd, eEnd);
         });
         if (!isFinite(axisStart) || !isFinite(axisEnd)) return;
+        tlAxisEnd = axisEnd; // mobile fallback: open-ended bars run to this
+        eventIndex = events; // mobile fallback: per-event start/end by index
         var span = Math.max(1, axisEnd - axisStart);
         // Map into an inset range so the first/last nodes never sit exactly
         // on the container edge (unhoverable dead zone + clipped labels).
@@ -148,15 +157,83 @@
             var bar = document.createElement('div');
             bar.className = 'timeline-bar timeline-bar-' + (e.el.getAttribute('data-cat') || 'work') +
                             (e.open ? ' timeline-bar-open' : '');
-            bar.style.left = pct(e.start).toFixed(2) + '%';
-            bar.style.width = (pct(endMonth) - pct(e.start)).toFixed(2) + '%';
+            // Position via custom properties, not style.left: the mobile
+            // fallback re-axes the same elements onto the vertical spine
+            // (top/height from month offsets) and must be able to cancel
+            // the desktop horizontal placement in one place.
+            bar.style.setProperty('--bar-x', pct(e.start).toFixed(2) + '%');
+            bar.style.setProperty('--bar-w', (pct(endMonth) - pct(e.start)).toFixed(2) + '%');
             bar.setAttribute('data-for', String(ei));
             barsWrap.appendChild(bar);
             bars.push(bar);
         });
 
+        // 3b. mobile geometry: re-axis bars onto the vertical spine. The
+        // stacked milestones are chronological, so the spine reads as a
+        // time axis: a bar runs from its event's node DOWN to its end
+        // month, interpolated between the neighbouring nodes' dates
+        // (same month math as the desktop --x engine). Desktop ignores
+        // --bar-top/--bar-h; mobile ignores --bar-x/--bar-w.
+        var mm = window.matchMedia('(max-width: 768px)');
+        var NODE_CENTER_OFFSET = 7; // node top (0.3rem) + half its 14px dot
+        var layoutMobileBars = function () {
+            if (!mm.matches) return;
+            var olRect = ol.getBoundingClientRect();
+            events.forEach(function (e, ei) {
+                // bars[] only holds bars for ranged events; resolve by the
+                // same data-for lookup the popover sync uses
+                var bar = null;
+                for (var bi = 0; bi < bars.length; bi++) {
+                    if (bars[bi].getAttribute('data-for') === String(ei)) { bar = bars[bi]; break; }
+                }
+                if (!bar) return; // point event: no bar element
+                var m = e.el;
+                var node = m.querySelector('.milestone-node');
+                if (!node) return;
+                var nodeTopInLi = node.getBoundingClientRect().top -
+                                  m.getBoundingClientRect().top;
+                var startY = m.offsetTop + nodeTopInLi + NODE_CENTER_OFFSET;
+                var endMonth = e.end !== null ? e.end : tlAxisEnd;
+                var endY;
+                if (endMonth >= tlAxisEnd) {
+                    // open-ended (or ending at the axis edge): run to the
+                    // bottom of the spine
+                    endY = olRect.height;
+                } else {
+                    // interpolate between the surrounding milestones'
+                    // node centers by month offset
+                    var prev = null, next = null;
+                    for (var k = 0; k < events.length; k++) {
+                        var s = events[k].start;
+                        if (s <= endMonth && (prev === null || s > prev.start)) prev = events[k];
+                        if (s > endMonth && (next === null || s < next.start)) next = events[k];
+                    }
+                    var lo = prev ? prev.start : e.start;
+                    var hi = next ? next.start : (prev ? prev.start + 12 : e.start + 12);
+                    var t = hi > lo ? (endMonth - lo) / (hi - lo) : 0;
+                    var yLo = prev ? prev.el.offsetTop : m.offsetTop;
+                    var yHi = next ? next.el.offsetTop : (prev ? prev.el.offsetTop : m.offsetTop);
+                    var nodeTop2 = next
+                        ? next.el.querySelector('.milestone-node').getBoundingClientRect().top -
+                          next.el.getBoundingClientRect().top
+                        : nodeTopInLi;
+                    endY = yLo + t * (yHi - yLo) + nodeTop2 + NODE_CENTER_OFFSET;
+                }
+                bar.style.setProperty('--bar-top', startY.toFixed(1) + 'px');
+                bar.style.setProperty('--bar-h', Math.max(0, endY - startY).toFixed(1) + 'px');
+            });
+        };
+        if (mm.matches) requestAnimationFrame(layoutMobileBars);
+        window.addEventListener('load', function () {
+            if (mm.matches) requestAnimationFrame(layoutMobileBars);
+        });
+        mm.addEventListener ? mm.addEventListener('change', function (ev) {
+            if (ev.matches) requestAnimationFrame(layoutMobileBars);
+        }) : mm.addListener(function () { if (mm.matches) requestAnimationFrame(layoutMobileBars); });
+
         // 4. reposition popovers after layout shifts (dates/nodes moved)
         var reposition = function () {
+            if (mm.matches) requestAnimationFrame(layoutMobileBars);
             milestones.forEach(function (m) {
                 if (m.classList.contains('is-open')) {
                     positionPopover(m, m.querySelector('.milestone-node'), m.querySelector('.milestone-body'));
