@@ -79,8 +79,10 @@ python3 test_contact_handler.py
 ### Deployment
 
 1. Push to `main` branch triggers GitHub Actions
-2. Workflow builds Lambda, deploys site to S3, invalidates CloudFront cache
+2. Workflow builds Lambda, stamps content-hashed asset URLs into the HTML, deploys the site to S3 (immutable assets cached 1 year; HTML always revalidated), and invalidates the CloudFront cache
 3. Site live at your domain
+
+**Cache busting:** deploy.yml rewrites the `styles.css` / `timeline.js` / `script.js` references to `?v=<content-hash>` and syncs them as immutable assets (`max-age=31536000`). A changed asset changes its URL, so returning visitors never serve stale CSS/JS from their browser cache after a deploy — and unchanged assets keep their cache entries between deploys. The CloudFront distribution includes the query string in its cache key (`infra/modules/static-site/main.tf`), so versioned URLs also miss the edge cache. HTML files are synced `no-cache` and revalidated on every visit. Keep the two S3 sync groups disjoint: JS/CSS assets belong to the long-cache group via hashed URLs; only `index.html`/`404.html` go in the no-cache group.
 
 ## Infrastructure Setup
 

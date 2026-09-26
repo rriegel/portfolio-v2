@@ -63,7 +63,11 @@ resource "aws_cloudfront_distribution" "site" {
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
-      query_string = false
+      # Cache keys include the query string so versioned asset URLs
+      # (styles.css?v=<hash>, stamped by deploy.yml) are guaranteed edge
+      # cache misses - a new version can never be served from a stale
+      # edge entry under the same path key.
+      query_string = true
       cookies {
         forward = "none"
       }
