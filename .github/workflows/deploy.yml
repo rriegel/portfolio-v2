@@ -33,21 +33,38 @@ jobs:
             --zip-file fileb://app/lambda/lambda.zip \
             --publish
 
+      - name: Stamp content-hashed asset URLs into HTML
+        run: |
+          # Hash of all versioned assets: the URL changes only when content changes,
+          # so returning visitors reuse their cache between deploys and get fresh
+          # assets the moment one changes (browsers cache by full URL incl. ?v=).
+          HASH=$(sha256sum app/site/styles.css app/site/timeline.js app/site/script.js | sha256sum | cut -c1-8)
+          sed -i "s|styles.css|styles.css?v=$HASH|; s|timeline.js|timeline.js?v=$HASH|; s|script.js|script.js?v=$HASH|" app/site/index.html
+          sed -i "s|styles.css|styles.css?v=$HASH|" app/site/404.html
+          echo "Asset version: $HASH"
+          grep -nE 'styles.css|timeline.js|script.js' app/site/index.html app/site/404.html
+
       - name: Deploy static site to S3
         run: |
-          # Deploy assets with long cache
+          # Group 1: immutable assets. URLs are content-hashed (stamped into the
+          # HTML above), so a 1-year cache is safe - a changed asset changes the
+          # URL, and browsers treat each version as a brand-new resource.
+          # NOTE: --delete only respects this group's excludes; index.html and
+          # 404.html are excluded and therefore never considered for deletion.
           aws s3 sync app/site/ s3://portfolio-prod-rrigel \
             --delete \
             --cache-control "max-age=31536000" \
             --exclude "index.html" \
-            --exclude "script.js"
-          
-          # Deploy HTML/JS with no-cache
+            --exclude "404.html"
+
+          # Group 2: HTML only, always revalidated. Groups are disjoint (no
+          # --delete here - with --exclude "*" it would wipe the bucket).
+          # All JS/CSS live in group 1 via hashed URLs; never move script.js,
+          # timeline.js, or styles.css back into this group.
           aws s3 sync app/site/ s3://portfolio-prod-rrigel \
             --exclude "*" \
             --include "index.html" \
-            --include "script.js" \
-            --include "timeline.js" \
+            --include "404.html" \
             --cache-control "max-age=0,no-cache,no-store,must-revalidate"
 
       - name: Invalidate CloudFront cache
