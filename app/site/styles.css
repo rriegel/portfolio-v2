@@ -174,7 +174,12 @@ nav .container {
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    will-change: opacity, transform;
+    /* NO will-change here: it would keep .container a permanent stacking
+       context after the reveal settles, fencing the timeline popover ladder
+       (li z-index 30) inside the About section - later sibling sections
+       (Projects/Contact) would paint OVER open popovers that cross the
+       boundary. The transform during the 0.6s animation already promotes the
+       layer; nothing needs the hint once settled. */
 }
 
 .reveal.is-visible {
