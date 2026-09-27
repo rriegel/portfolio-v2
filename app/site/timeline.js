@@ -169,13 +169,11 @@
         });
 
         // 3b. mobile geometry: re-axis bars onto the vertical spine. The
-        // stacked milestones are chronological, so the spine reads as a
-        // time axis: a bar runs from its event's node DOWN to its end
-        // month, interpolated between the neighbouring nodes' dates
-        // (same month math as the desktop --x engine). Desktop ignores
+        // spine is a time axis (each milestone sits at its month offset,
+        // see 3c): a bar runs from its event's node DOWN to its end
+        // month at the same fixed px/month scale. Desktop ignores
         // --bar-top/--bar-h; mobile ignores --bar-x/--bar-w.
         var mm = window.matchMedia('(max-width: 768px)');
-        var NODE_CENTER_OFFSET = 7; // node top (0.3rem) + half its 14px dot
         var layoutMobileBars = function () {
             if (!mm.matches) return;
             var olRect = ol.getBoundingClientRect();
@@ -188,52 +186,94 @@
                 }
                 if (!bar) return; // point event: no bar element
                 var m = e.el;
-                var node = m.querySelector('.milestone-node');
-                if (!node) return;
-                var nodeTopInLi = node.getBoundingClientRect().top -
-                                  m.getBoundingClientRect().top;
-                var startY = m.offsetTop + nodeTopInLi + NODE_CENTER_OFFSET;
+                // box top = the event line; the bar runs DOWN to its end
+                // month (the 6px WIDTH centers on the spine via CSS left).
+                var startY = m.offsetTop;
                 var endMonth = e.end !== null ? e.end : tlAxisEnd;
                 var endY;
                 if (endMonth >= tlAxisEnd) {
-                    // open-ended (or ending at the axis edge): run to the
-                    // bottom of the spine
-                    endY = olRect.height;
+                    // open-ended (or ending at the axis edge): stop 8px short
+                    // of the spine bottom — the ::after arrowhead occupies
+                    // that zone, its tip landing exactly at the ol edge
+                    endY = olRect.height - 8;
                 } else {
-                    // interpolate between the surrounding milestones'
-                    // node centers by month offset
-                    var prev = null, next = null;
-                    for (var k = 0; k < events.length; k++) {
-                        var s = events[k].start;
-                        if (s <= endMonth && (prev === null || s > prev.start)) prev = events[k];
-                        if (s > endMonth && (next === null || s < next.start)) next = events[k];
-                    }
-                    var lo = prev ? prev.start : e.start;
-                    var hi = next ? next.start : (prev ? prev.start + 12 : e.start + 12);
-                    var t = hi > lo ? (endMonth - lo) / (hi - lo) : 0;
-                    var yLo = prev ? prev.el.offsetTop : m.offsetTop;
-                    var yHi = next ? next.el.offsetTop : (prev ? prev.el.offsetTop : m.offsetTop);
-                    var nodeTop2 = next
-                        ? next.el.querySelector('.milestone-node').getBoundingClientRect().top -
-                          next.el.getBoundingClientRect().top
-                        : nodeTopInLi;
-                    endY = yLo + t * (yHi - yLo) + nodeTop2 + NODE_CENTER_OFFSET;
+                    // exact month mapping: the li's themselves sit at their
+                    // month offsets (--y), so the end month maps through the
+                    // same linear scale — no neighbor interpolation needed
+                    endY = TOP_PAD + (endMonth - axisStart) * PX_PER_MONTH;
                 }
                 bar.style.setProperty('--bar-top', startY.toFixed(1) + 'px');
                 bar.style.setProperty('--bar-h', Math.max(0, endY - startY).toFixed(1) + 'px');
             });
         };
-        if (mm.matches) requestAnimationFrame(layoutMobileBars);
-        window.addEventListener('load', function () {
+
+        // 3c. mobile proportional spine: the vertical list becomes a
+        // time-proportional axis — the same principle as the desktop --x
+        // engine, at a fixed scale (6px per month: 2-month event gaps stay
+        // ~12px apart and same-side label pairs, min 7 months here, clear
+        // the ~29px label boxes). Each event's month offset maps to a --y
+        // offset (px from the ol top) and the ol gets an explicit height
+        // (--tl-mh), so node gaps encode elapsed months and year markers
+        // re-position at their real January boundaries. Viewport-
+        // independent, so no relayout churn when the mobile URL bar hides.
+        // Desktop ignores --y/--tl-mh entirely.
+        var PX_PER_MONTH = 6, TOP_PAD = 24, BOTTOM_PAD = 38; // 30 pad + 8px open-
+                                                     // bar arrowhead zone
+        var setMobileProportional = function () {
+            if (!mm.matches) {
+                // desktop (or back out of mobile): restore flow geometry
+                ol.classList.remove('tl-proportional');
+                return;
+            }
+            ol.classList.add('tl-proportional');
+            ol.style.setProperty('--tl-mh',
+                (TOP_PAD + span * PX_PER_MONTH + BOTTOM_PAD) + 'px');
+            var yPx = function (months) {
+                return TOP_PAD + (months - axisStart) * PX_PER_MONTH;
+            };
+            events.forEach(function (e) {
+                e.el.style.setProperty('--y', yPx(e.start) + 'px');
+            });
+            var markers = ol.querySelectorAll('.year-marker');
+            for (var k = 0; k < markers.length; k++) {
+                var yr = parseInt(markers[k].textContent, 10);
+                markers[k].style.setProperty('--y', yPx(yr * 12) + 'px');
+            }
+            // label nudge: month labels sit just below their line; when two
+            // events are closer than one label box (real minimum: 2 months =
+            // 12px at 6px/month), shift the later label down just enough to
+            // clear the previous one. ONLY the label moves (via --nudge,
+            // consumed by the mobile CSS) — nodes, bars, and year markers
+            // stay exactly proportional.
+            var labelH = 15;
+            var firstDate = events[0].el.querySelector('.milestone-date');
+            if (firstDate && firstDate.getBoundingClientRect().height > 4) {
+                labelH = Math.ceil(firstDate.getBoundingClientRect().height);
+            }
+            var prevBottom = -Infinity;
+            events.forEach(function (e) {
+                var lab = e.el.querySelector('.milestone-date');
+                if (!lab) return;
+                var top = yPx(e.start);
+                var shift = prevBottom + 2 > top ? prevBottom + 2 - top : 0;
+                lab.style.setProperty('--nudge', shift.toFixed(1) + 'px');
+                prevBottom = top + labelH + shift;
+            });
+        };
+        // one entry point for every mobile re-layout trigger: geometry
+        // first (heights/positions), then bar geometry reads the result
+        var relayoutMobile = function () {
+            setMobileProportional();
             if (mm.matches) requestAnimationFrame(layoutMobileBars);
-        });
-        mm.addEventListener ? mm.addEventListener('change', function (ev) {
-            if (ev.matches) requestAnimationFrame(layoutMobileBars);
-        }) : mm.addListener(function () { if (mm.matches) requestAnimationFrame(layoutMobileBars); });
+        };
+        relayoutMobile();
+        window.addEventListener('load', relayoutMobile);
+        mm.addEventListener ? mm.addEventListener('change', relayoutMobile)
+            : mm.addListener(relayoutMobile);
 
         // 4. reposition popovers after layout shifts (dates/nodes moved)
         var reposition = function () {
-            if (mm.matches) requestAnimationFrame(layoutMobileBars);
+            if (mm.matches) relayoutMobile();
             milestones.forEach(function (m) {
                 if (m.classList.contains('is-open')) {
                     positionPopover(m, m.querySelector('.milestone-node'), m.querySelector('.milestone-body'));
