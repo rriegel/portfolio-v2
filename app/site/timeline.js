@@ -239,8 +239,8 @@
                 var yr = parseInt(markers[k].textContent, 10);
                 markers[k].style.setProperty('--y', yPx(yr * 12) + 'px');
             }
-            // label nudge: month labels sit just below their line; when two
-            // events are closer than one label box (real minimum: 2 months =
+            // label nudge: month labels are CENTERED on their line; when two
+            // lines are closer than a label box (real minimum: 2 months =
             // 12px at 6px/month), shift the later label down just enough to
             // clear the previous one. ONLY the label moves (via --nudge,
             // consumed by the mobile CSS) — nodes, bars, and year markers
@@ -250,14 +250,15 @@
             if (firstDate && firstDate.getBoundingClientRect().height > 4) {
                 labelH = Math.ceil(firstDate.getBoundingClientRect().height);
             }
-            var prevBottom = -Infinity;
+            var half = labelH / 2, prevCenter = -Infinity;
             events.forEach(function (e) {
                 var lab = e.el.querySelector('.milestone-date');
                 if (!lab) return;
-                var top = yPx(e.start);
-                var shift = prevBottom + 2 > top ? prevBottom + 2 - top : 0;
+                var y = yPx(e.start);
+                var need = prevCenter + half + 2 - (y - half);
+                var shift = need > 0 ? need : 0;
                 lab.style.setProperty('--nudge', shift.toFixed(1) + 'px');
-                prevBottom = top + labelH + shift;
+                prevCenter = y + shift;
             });
         };
         // one entry point for every mobile re-layout trigger: geometry

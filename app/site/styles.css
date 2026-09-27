@@ -1240,6 +1240,14 @@ footer .container {
     }
 
     /* Mobile: revert to the vertical timeline (popovers become inline cards) */
+    /* Gutter for the proportional mode's year tick labels between the
+       viewport edge and the node dots. Budget: label ~36px + 8px gap to
+       the dots + ~9px to the viewport edge = ~53px (the dots sit 6px left
+       of the ol edge; a 30px gutter clipped "2020" to "020"). */
+    .life-timeline-wrap {
+        padding-left: 2.75rem;
+    }
+
     .life-timeline {
         display: block;
         padding: 0 0 0 2rem;
@@ -1337,23 +1345,32 @@ footer .container {
     }
 
     /* must beat the desktop .milestone.side-up .milestone-date rule (0-3-0):
-       same specificity here, later source order wins. Labels sit just below
-       their line (reading order); timeline.js nudges a label down when the
-       next event's label would overlap (real minimum: 2 months = 12px at
-       6px/month vs a ~15px label box), so tight pairs stay readable while
-       nodes/bars/markers stay exactly proportional. */
+       same specificity here, later source order wins. Flow fallback: label
+       sits at the top of its li block. */
     .milestone.side-up .milestone-date,
     .milestone.side-down .milestone-date {
         display: inline-block;
         font-size: 0.85rem;
         line-height: 1.1;
         position: static;
-        transform: translateY(var(--nudge, 0px));
         white-space: normal;
         /* static position lands at ol 2rem + li 1.5rem padding (56px from
            the spine); pull the label back to ~10px so it sits just right
            of the 14px node dots */
         margin: 0 0 0 -2rem;
+    }
+
+    /* Proportional mode: label vertically CENTERED on its event line (in
+       line with the node, like the desktop's axis labels); timeline.js
+       nudges a label down only when the next event's label would overlap
+       (real minimum: 2 months = 12px at 6px/month vs a ~15px label box) —
+       nodes, bars, and year markers stay exactly proportional. */
+    .tl-proportional .milestone.side-up .milestone-date,
+    .tl-proportional .milestone.side-down .milestone-date {
+        /* top of the line box (kills baseline-alignment drop): the box top
+           = li top = the event line, so translateY(-50%) centers on it */
+        vertical-align: top;
+        transform: translateY(calc(-50% + var(--nudge, 0px)));
     }
 
     /* Mobile: duration bars re-axis onto the vertical spine. The stacked
@@ -1420,16 +1437,24 @@ footer .container {
         color: #999;
     }
 
-    /* Proportional mode keeps the desktop's real-boundary placement, on the
-       vertical spine: absolute at --y (the Jan boundary, from timeline.js),
-       right-aligned above the boundary line (month labels own the left
-       column at their own lines, so the two never collide). */
+    /* Proportional mode: year markers become y-axis tick labels — absolute
+       at --y (the Jan boundary from timeline.js), vertically CENTERED on
+       their boundary line, right-aligned in the gutter LEFT of the spine
+       (month labels own the right side at their own event lines, so the
+       two columns never collide — and nothing covers the node dots). */
     .tl-proportional .year-marker {
         position: absolute;
         left: auto;
-        right: 1rem;
+        /* right edge 8px left of the node dots (the dots STRADDLE the ol's
+           left edge: node left = ol.left - 6.4px). Spine-hugging put the
+           label ~1px from dots / ~2px from month labels where a Jan
+           boundary lands near an event ("2025"+"Dec" read as one string).
+           With the 2.25rem wrap padding this leaves ~7.5px to the dots and
+           ~38px to the month-label column — all three columns clear. */
+        right: calc(100% + 14px);
         top: var(--y, auto);
-        transform: translateY(calc(-100% - 6px));
+        transform: translateY(-50%);
+        font-size: 1rem;
         line-height: 1;
         white-space: nowrap;
     }
@@ -1470,12 +1495,23 @@ footer .container {
            right of the spine (li padding box is 2rem from the ol edge). */
         position: absolute;
         /* the li is a 1px row on its event line: anchor the card just below
-           the line, clearing the month label (~15px box) */
+           the line and at the ol's left edge (li sits 2rem in, so -2rem) —
+           starts left of the spine, clear of the month labels and nodes */
         top: 1.75rem;
         bottom: auto;
-        left: -1.75rem;
+        /* -1.4rem: clears the node dots (they straddle the ol edge, right
+           half ends at li.left - 24.4px; the open card must not cover them
+           or it intercepts taps on other nodes) while staying inside the
+           viewport (li.left - 22.4 + 326 <= 390 at 390px). */
+        left: -1.4rem;
         transform: none;
-        width: min(340px, calc(100vw - 4rem));
+        /* anchor BOTH edges: the card spans from just right of the node
+           dots to the ol's right edge (always >=15px inside the viewport),
+           capped at 340px. A vw-based width can't work here — the anchor
+           point moves with the wrap/container padding. */
+        right: 0;
+        width: auto;
+        max-width: 340px;
         z-index: 30;
     }
 
