@@ -1376,11 +1376,11 @@ footer .container {
            (32px from the spine); -10px puts the label at a clear header
            indent (~22px), right of the month column (~10px). Right margin
            per user edit kept. */
-        margin: 0.75rem 2rem 0.25rem 1rem;
+        /* margin: 0.75rem 2rem 0.25rem 1rem; */
         border: none;
         background: none;
         padding: 0;
-        color: #00b8d9;
+        color: #999;
     }
 
     /* the desktop spine tick must not follow the marker onto mobile: with the
